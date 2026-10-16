@@ -1,0 +1,534 @@
+id,sector,industry,name,definition,discovery
+MAT-001,Material Holdings,Income and Assets,Annual income (estimated),"Gross yearly earnings, as estimated from available evidence.",0
+MAT-002,Material Holdings,Income and Assets,Net worth (inferred from vacations),"Total assets less liabilities, as inferred from travel frequency and destination.",0
+MAT-003,Material Holdings,Income and Assets,Retirement savings (suspected),"Balance of retirement accounts, as suspected.",0
+MAT-004,Material Holdings,Real Property,Home square footage,Interior living area of primary residence.,0
+MAT-005,Material Holdings,Real Property,Neighborhood desirability,Perceived prestige of residential area.,0
+MAT-006,Material Holdings,Real Property,Second home,"Ownership of, or regular access to, an additional residence.",0
+MAT-007,Material Holdings,Real Property,Bathrooms per occupant,Ratio of bathrooms to household members.,0
+MAT-008,Material Holdings,Real Property,Kitchen countertop material,Grade of countertop surface in primary residence.,0
+MAT-009,Material Holdings,Real Property,Heated garage,Presence and quality of climate control in garage.,1
+MAT-010,Material Holdings,Grounds,Lawn condition,Density uniformity and color of lawn.,0
+MAT-011,Material Holdings,Grounds,Outdoor furniture,Quality and coordination of patio furnishings.,0
+MAT-012,Material Holdings,Vehicles,Vehicle make and model,Prestige of primary vehicle.,0
+MAT-013,Material Holdings,Vehicles,Vehicle age,Recency of primary vehicle. Newer rates higher.,0
+MAT-014,Material Holdings,Vehicles,Boat,Ownership of a watercraft of any size.,0
+MAT-015,Material Holdings,Accessories,Wristwatch,Prestige of wristwatch worn. Includes the conspicuous choice to wear none.,0
+MAT-016,Material Holdings,Income and Assets,Bonus structure (implied),"Variable compensation, as implied by December purchases.",0
+MAT-017,Material Holdings,Income and Assets,Inheritance prospects,"Expected value of future inheritance, as discussed at family gatherings.",0
+MAT-018,Material Holdings,Income and Assets,Investment vocabulary,Fluency with terms such as basis points in casual conversation.,0
+MAT-019,Material Holdings,Income and Assets,Financial advisor,Retention of a named financial advisor.,0
+MAT-020,Material Holdings,Income and Assets,Credit score (volunteered),"Credit score, when mentioned unprompted.",0
+MAT-021,Material Holdings,Real Property,Ceiling height,Vertical clearance of principal rooms.,0
+MAT-022,Material Holdings,Real Property,Mudroom,Presence of a room dedicated to the removal of footwear.,0
+MAT-023,Material Holdings,Real Property,Home office with door,Workspace with a closing door. A corner of the bedroom does not qualify.,0
+MAT-024,Material Holdings,Real Property,Guest room (dedicated),Bedroom kept exclusively for visitors.,0
+MAT-025,Material Holdings,Real Property,Walk-in closet,Closet admitting the subject's entire body.,0
+MAT-026,Material Holdings,Real Property,Original hardwood floors,Presence of original or convincingly restored hardwood flooring.,0
+MAT-027,Material Holdings,Real Property,Working fireplace,Fireplace in operable condition.,1
+MAT-028,Material Holdings,Real Property,Kitchen island seating,Number of stools at kitchen island.,0
+MAT-029,Material Holdings,Grounds,Mature trees,Number and age of trees on the property.,0
+MAT-030,Material Holdings,Grounds,Driveway length,Distance from road to residence.,0
+MAT-031,Material Holdings,Grounds,Raised garden beds,Presence and productivity of raised beds.,0
+MAT-032,Material Holdings,Grounds,Exterior lighting scheme,Deliberateness of outdoor lighting.,1
+MAT-033,Material Holdings,Grounds,Fire pit,Presence of a fire pit with built-in seating.,0
+MAT-034,Material Holdings,Vehicles,Second vehicle,Ownership of an additional vehicle not required for transport.,0
+MAT-035,Material Holdings,Vehicles,Vehicle interior condition,Condition of vehicle interior when offering a ride.,0
+MAT-036,Material Holdings,Vehicles,Roof rack (in use),Roof-mounted carrier with evidence of use.,0
+MAT-037,Material Holdings,Vehicles,Trailer hitch,"Fitted tow hitch, whether or not anything is towed.",1
+MAT-038,Material Holdings,Accessories,Sunglasses,Prestige and fit of sunglasses.,0
+MAT-039,Material Holdings,Accessories,Luggage,Quality and coordination of luggage at baggage claim.,0
+MAT-040,Material Holdings,Accessories,Wallet profile,Thickness of wallet relative to contents. Slimness rates higher.,0
+MAT-041,Material Holdings,Accessories,Writing instrument,Quality of personal pen.,1
+MAT-042,Material Holdings,Accessories,Umbrella,Size and structural integrity of umbrella in wind.,0
+CAR-001,Career and Credentials,Position,Job title,Formal title as stated.,0
+CAR-002,Career and Credentials,Position,Job title (inflation-adjusted),Formal title corrected for employer title inflation.,0
+CAR-003,Career and Credentials,Position,Direct reports,Number of people reporting to subject.,0
+CAR-004,Career and Credentials,Position,Employer prestige,Recognition of employer name by strangers.,0
+CAR-005,Career and Credentials,Position,Remote work privileges,Freedom to work from a location of one's choosing.,0
+CAR-006,Career and Credentials,Position,Unsolicited recruitment,Frequency of being approached by recruiters without applying.,0
+CAR-007,Career and Credentials,Education,Degree-granting institution,Prestige of institution awarding highest degree.,0
+CAR-008,Career and Credentials,Education,Highest degree held,Level of highest completed academic degree.,0
+CAR-009,Career and Credentials,Recognition,Industry awards,Professional honors received.,0
+CAR-010,Career and Credentials,Recognition,Speaking invitations,Frequency of being invited to speak at events.,0
+CAR-011,Career and Credentials,Recognition,Published works,Books articles or papers bearing subject's name.,0
+CAR-012,Career and Credentials,Recognition,Professional endorsements,Endorsements received on professional networking platforms.,0
+CAR-013,Career and Credentials,Presentation,Professional headshot,Quality of official professional photograph.,0
+CAR-014,Career and Credentials,Presentation,Explaining job at parties,Ability to describe one's work in a way that impresses.,0
+CAR-015,Career and Credentials,Trajectory,Years until retirement,Projected time to financial independence. Fewer rates higher.,0
+CAR-016,Career and Credentials,Position,Office with window,Assigned workspace with a window.,0
+CAR-017,Career and Credentials,Position,Assistant,Retention of a person who manages the subject's calendar.,0
+CAR-018,Career and Credentials,Position,Reserved parking,Assigned parking space at workplace.,0
+CAR-019,Career and Credentials,Position,Business cards,Card stock weight and finish.,1
+CAR-020,Career and Credentials,Position,Calendar density (perceived),Difficulty of scheduling a meeting with subject.,0
+CAR-021,Career and Credentials,Position,Out-of-office message,Duration and destination implied by automatic reply.,0
+CAR-022,Career and Credentials,Education,Graduated with honors,Latin honors or equivalent at graduation.,0
+CAR-023,Career and Credentials,Education,Admissions test score (recalled),"Standardized admissions test score, as still recalled.",0
+CAR-024,Career and Credentials,Education,Alumni magazine mention,Appearance in an alumni publication.,0
+CAR-025,Career and Credentials,Education,Continuing education,Credentials earned after formal schooling.,0
+CAR-026,Career and Credentials,Education,Study abroad,Semester or year spent in another country during education.,0
+CAR-027,Career and Credentials,Recognition,Name on a door,"Name displayed on a door, office or parking space.",0
+CAR-028,Career and Credentials,Recognition,Cited in meetings,Frequency of being named as a source by colleagues.,0
+CAR-029,Career and Credentials,Recognition,Acknowledgments appearances,Appearances in the acknowledgments of others' work.,1
+CAR-030,Career and Credentials,Recognition,Patent,Named on a granted patent or application.,0
+CAR-031,Career and Credentials,Presentation,Idea attribution,Frequency with which subject's points are later repeated by others as their own. Lower rates higher.,0
+CAR-032,Career and Credentials,Presentation,Video call background,Composition of background in video meetings.,0
+CAR-033,Career and Credentials,Presentation,Conference badge tier,Badge color or tier at professional events.,1
+CAR-034,Career and Credentials,Presentation,Slide design,Visual quality of presentation slides.,0
+CAR-035,Career and Credentials,Trajectory,Promotion velocity,Average years between promotions. Fewer rates higher.,0
+CAR-036,Career and Credentials,Trajectory,Side business,Operation of a profitable venture outside primary employment.,0
+CAR-037,Career and Credentials,Trajectory,Equity stake,Ownership interest in employer or other venture.,0
+CAR-038,Career and Credentials,Trajectory,Career change (successful),Completion of a change of field with apparent improvement.,0
+CAR-039,Career and Credentials,Trajectory,Sabbatical,Extended paid leave taken.,1
+CAR-040,Career and Credentials,Trajectory,Former peers' current titles,Titles now held by people the subject once outranked. Lower rates higher.,0
+PHY-001,Physical Assets,General Appearance,Hairline trajectory,Position and projected movement of hairline.,0
+PHY-002,Physical Assets,General Appearance,Hair density,Volume of hair per unit of scalp.,0
+PHY-003,Physical Assets,General Appearance,Skin clarity,Evenness and clarity of complexion.,0
+PHY-004,Physical Assets,General Appearance,Teeth whiteness,Brightness of visible dentition.,0
+PHY-005,Physical Assets,General Appearance,Teeth alignment,Regularity of visible dentition.,0
+PHY-006,Physical Assets,General Appearance,Height (absolute),Standing height.,0
+PHY-007,Physical Assets,General Appearance,Height (when standing next to them),Standing height as experienced in direct proximity to the Comparable.,0
+PHY-008,Physical Assets,General Appearance,Posture,Uprightness and composure of stance.,0
+PHY-009,Physical Assets,General Appearance,Jawline definition,Definition of jaw. Rate in profile and three-quarter view and average.,0
+PHY-010,Physical Assets,General Appearance,Eyebrow composure,Order and symmetry of eyebrows.,1
+PHY-011,Physical Assets,General Appearance,Aging rate since graduation,Apparent change since final year of education. Less rates higher.,0
+PHY-012,Physical Assets,General Appearance,Photogenic consistency,Proportion of random photographs in which subject looks acceptable.,0
+PHY-013,Physical Assets,General Appearance,Composure in candid photos,Apparent ease in unposed photographs.,0
+PHY-014,Physical Assets,General Appearance,Wardrobe fit,Accuracy of garment fit.,0
+PHY-015,Physical Assets,General Appearance,Shoe condition,Cleanliness and repair of footwear.,0
+PHY-016,Physical Assets,Personal Endowments,Vocal resonance (perceived),Depth and warmth of speaking voice relative to a reference voice of your choosing.,0
+PHY-017,Physical Assets,Personal Endowments,Laugh quality,Pleasantness of laugh to others in the room.,1
+PHY-018,Physical Assets,Personal Endowments,Handshake grip,Firmness of handshake. Excessive firmness is not penalized.,0
+PHY-019,Physical Assets,Personal Endowments,Hand size (observed during handshake),Size of hand as experienced during greeting.,0
+PHY-020,Physical Assets,Personal Endowments,Secondary characteristics: prominence,Prominence of secondary sex characteristics as observed under typical clothing conditions.,0
+PHY-021,Physical Assets,Personal Endowments,Primary characteristics: self-estimated,Self-reported. Not independently verified. Confidence: Low.,0
+PHY-022,Physical Assets,Personal Endowments,Partner attractiveness (relative),Attractiveness of partner as assessed by mutual acquaintances.,0
+PHY-023,Physical Assets,Personal Endowments,Scent (unprompted compliments),Frequency of unsolicited remarks about how the subject smells.,0
+PHY-024,Physical Assets,Personal Endowments,Eye contact endurance,Duration of comfortable sustained eye contact.,0
+PHY-025,Physical Assets,Personal Endowments,Forearm definition (rolled sleeves),Forearm appearance when sleeves are rolled to the elbow.,1
+PHY-026,Physical Assets,Personal Endowments,Dance floor comportment,Apparent ease when dancing in public.,0
+PHY-027,Physical Assets,Bearing,Stair composure,Ability to converse normally at the top of several flights of stairs.,0
+PHY-028,Physical Assets,Bearing,Single-trip grocery carry,Ability to carry all groceries from car in one trip.,0
+PHY-029,Physical Assets,Bearing,Race medals displayed,Athletic finisher medals visible in the home.,0
+PHY-030,Physical Assets,Bearing,Resting heart rate (as disclosed),Resting heart rate when mentioned in conversation.,1
+PHY-031,Physical Assets,General Appearance,Under-eye condition,Darkness and puffiness beneath the eyes. Less rates higher.,0
+PHY-032,Physical Assets,General Appearance,Nail condition,Grooming of fingernails.,0
+PHY-033,Physical Assets,General Appearance,Ear proportion,Size and set of ears relative to head.,0
+PHY-034,Physical Assets,General Appearance,Nasal profile,Regularity of nose in side view.,0
+PHY-035,Physical Assets,General Appearance,Smile symmetry,Symmetry of smile in photographs.,0
+PHY-036,Physical Assets,General Appearance,Graying pattern,Distribution of gray hair. Distinguished distribution rates higher.,0
+PHY-037,Physical Assets,General Appearance,Eyelash length,Length and density of eyelashes.,1
+PHY-038,Physical Assets,General Appearance,Beard capability,"Ability to grow a full and even beard, whether or not exercised.",0
+PHY-039,Physical Assets,General Appearance,Tan retention,Duration of tan after return from vacation.,0
+PHY-040,Physical Assets,General Appearance,Perspiration visibility,Visibility of perspiration through clothing. Less rates higher.,0
+PHY-041,Physical Assets,General Appearance,Voice on playback,"Acceptability of subject's voice in recordings, as judged by subject.",0
+PHY-042,Physical Assets,Personal Endowments,Primary characteristics: length (at rest),Measured along the dorsal aspect from the pubic bone. Self-reported. Confidence: Low.,0
+PHY-043,Physical Assets,Personal Endowments,Primary characteristics: length (functional),"As above, under operating conditions. Self-reported. Confidence: Low.",0
+PHY-044,Physical Assets,Personal Endowments,Primary characteristics: girth,"Circumference at the midpoint, under operating conditions. Self-reported.",0
+PHY-045,Physical Assets,Personal Endowments,Primary characteristics: vascularity,"Visibility of superficial veins. Higher rates higher, by convention.",0
+PHY-046,Physical Assets,Personal Endowments,Primary characteristics: curvature,Deviation from the longitudinal axis. Rated against a reference standard the subject is invited to supply.,0
+PHY-047,Physical Assets,Personal Endowments,Primary characteristics: resting-to-functional ratio,Both classifications are recognized and neither is preferred. Rate accordingly.,1
+PHY-048,Physical Assets,Personal Endowments,Primary characteristics: changing-room standing,Subject's impression of relative standing in shared changing facilities.,0
+PHY-049,Physical Assets,Personal Endowments,Secondary characteristics: symmetry,Correspondence between left and right. Minor asymmetry is clinically typical and is rated.,0
+PHY-050,Physical Assets,Personal Endowments,Secondary characteristics: projection,"Anterior extent in profile, under typical clothing conditions.",0
+PHY-051,Physical Assets,Personal Endowments,Secondary characteristics: retention,Positional stability since final year of education.,0
+PHY-052,Physical Assets,Personal Endowments,Areolar diameter,Diameter of the areola. Rated against a reference range not supplied.,0
+PHY-053,Physical Assets,Personal Endowments,Nipple visibility through fabric,Visibility through a single garment layer at room temperature.,0
+PHY-054,Physical Assets,Personal Endowments,Nipple orientation,"Everted, flat or inverted. All presentations are common. The scale is applied regardless.",1
+PHY-055,Physical Assets,Personal Endowments,Chest hair coverage,Extent and distribution of thoracic hair. No direction of preference is published.,0
+PHY-056,Physical Assets,Personal Endowments,Dorsal hair,Extent of hair on the back. Less rates higher.,0
+PHY-057,Physical Assets,Personal Endowments,Foot size (observed),"Shoe size, as estimated from footwear left at the door.",0
+PHY-058,Physical Assets,Personal Endowments,Stamina (as implied),"Duration of intimate activity, as implied in conversation. Unverified.",0
+PHY-059,Physical Assets,Bearing,Push-ups (claimed),"Consecutive push-ups, as claimed.",0
+PHY-060,Physical Assets,Bearing,Plank duration,Time held in plank position.,0
+PHY-061,Physical Assets,Bearing,Swimming form,Stroke quality in public pools.,0
+PHY-062,Physical Assets,Bearing,Toe touch,Ability to touch toes with straight knees.,0
+PHY-063,Physical Assets,Bearing,Hangover recovery,Hours to full function after a social evening. Fewer rates higher.,1
+PHY-064,Physical Assets,Bearing,Sleeps on planes,Ability to sleep upright in economy seating.,0
+SOC-001,Social Infrastructure,Network,Has a guy,Possession of a trusted person for any given task.,0
+SOC-002,Social Infrastructure,Network,First-name basis with barista,Barista knows subject's name and order.,0
+SOC-003,Social Infrastructure,Network,Crisis contact,Being the person friends text first in a crisis.,0
+SOC-004,Social Infrastructure,Network,Close friends (claimed),Number of close friends as stated.,0
+SOC-005,Social Infrastructure,Network,Famous acquaintance,Network includes at least one recognizable person.,0
+SOC-006,Social Infrastructure,Network,Remembered after one meeting,Likelihood others recall subject's name after a single introduction.,0
+SOC-007,Social Infrastructure,Network,Knows the owner,Personal acquaintance with owners of local establishments.,0
+SOC-008,Social Infrastructure,Invitations,Wedding invitations received,Weddings invited to per year.,0
+SOC-009,Social Infrastructure,Invitations,Wedding party role,Highest role held in a wedding party.,0
+SOC-010,Social Infrastructure,Invitations,Dinner party invitations,Private dinner invitations per year.,0
+SOC-011,Social Infrastructure,Group Dynamics,Seat saved,Frequency of others saving the subject a seat.,0
+SOC-012,Social Infrastructure,Group Dynamics,Group chat reactions,Laugh reactions received per message in group chats.,0
+SOC-013,Social Infrastructure,Group Dynamics,Toasts given,Frequency of being asked to give a toast.,0
+SOC-014,Social Infrastructure,Group Dynamics,Recognized at restaurants,Frequency of being greeted by staff on arrival.,0
+SOC-015,Social Infrastructure,Neighbors,Neighbors wave first,Neighbors initiate the wave.,1
+SOC-016,Social Infrastructure,Network,Plus-one of choice,Frequency of being chosen as someone's guest.,0
+SOC-017,Social Infrastructure,Network,Has a lawyer friend,Ability to obtain an informal legal opinion at no cost.,0
+SOC-018,Social Infrastructure,Network,Has a doctor friend,Ability to describe a symptom by text and receive a reply.,0
+SOC-019,Social Infrastructure,Network,Introducer,Frequency of being the connection between others.,0
+SOC-020,Social Infrastructure,Network,Mutual acquaintances,Likelihood of shared acquaintances upon meeting anyone.,0
+SOC-021,Social Infrastructure,Network,Friendships kept since childhood,Friendships maintained from before age eighteen.,0
+SOC-022,Social Infrastructure,Invitations,Own-event turnout,Attendance at gatherings hosted by subject.,0
+SOC-023,Social Infrastructure,Invitations,Pre-wedding trip inclusion,Inclusion in bachelor or bachelorette travel.,0
+SOC-024,Social Infrastructure,Invitations,Last-minute invitations,Being called when plans form spontaneously.,0
+SOC-025,Social Infrastructure,Invitations,Group trip planning inclusion,Inclusion in group travel from the planning stage.,1
+SOC-026,Social Infrastructure,Invitations,Invited back,Proportion of hosts who invite subject a second time.,0
+SOC-027,Social Infrastructure,Group Dynamics,Stories retold by others,Subject's anecdotes repeated in subject's absence.,0
+SOC-028,Social Infrastructure,Group Dynamics,Affectionate nickname,Possession of a nickname used with evident fondness.,0
+SOC-029,Social Infrastructure,Group Dynamics,Group photo position,Position in group photographs. Central rates higher.,0
+SOC-030,Social Infrastructure,Group Dynamics,Inside jokes held,Number of current inside jokes subject is party to.,0
+SOC-031,Social Infrastructure,Group Dynamics,Sentences finished,Frequency of being allowed to finish sentences.,0
+SOC-032,Social Infrastructure,Group Dynamics,Room attention,Attention commanded on speaking in a group.,1
+SOC-033,Social Infrastructure,Neighbors,Borrowed tools returned,Tools lent to neighbors and returned unprompted.,0
+SOC-034,Social Infrastructure,Neighbors,Package custody,Willingness of neighbors to receive deliveries on subject's behalf.,0
+SOC-035,Social Infrastructure,Neighbors,Block party role,Role held at neighborhood gatherings.,0
+SOC-036,Social Infrastructure,Romance,How-we-met narrative,Narrative quality of how subject met partner.,0
+SOC-037,Social Infrastructure,Romance,Anniversary plans,"Ambition of anniversary arrangements, as later described.",0
+SOC-038,Social Infrastructure,Romance,Displays of affection (calibrated),Appropriateness of affection displayed in company.,0
+SOC-039,Social Infrastructure,Romance,Former partners' regard,How former partners speak of subject.,1
+SOC-040,Social Infrastructure,Romance,Wedding (comparative),"Venue, guest count and photography of subject's wedding.",0
+DOM-001,Domestic Operations,Living Things,Houseplant survival rate,Proportion of houseplants alive after one year.,0
+DOM-002,Domestic Operations,Living Things,Dog obedience,Responsiveness of dog to commands in public.,0
+DOM-003,Domestic Operations,Living Things,Cat's apparent affection,Visible fondness of cat toward owner.,1
+DOM-004,Domestic Operations,Living Things,Sourdough starter age,Age of continuously maintained sourdough culture.,1
+DOM-005,Domestic Operations,Kitchen,Good knives,Number of knives worth mentioning.,0
+DOM-006,Domestic Operations,Kitchen,Coffee setup,Sophistication of home coffee equipment.,0
+DOM-007,Domestic Operations,Kitchen,Spice drawer organization,Labeling and order of spices.,0
+DOM-008,Domestic Operations,Kitchen,Refrigerator orderliness,Visible order of refrigerator interior when opened by guests.,0
+DOM-009,Domestic Operations,Kitchen,Grill size,Cooking surface area of outdoor grill.,0
+DOM-010,Domestic Operations,Linens,Thread count,Thread count of bed linens.,0
+DOM-011,Domestic Operations,Linens,Fitted sheet folding,Ability to fold a fitted sheet into a rectangle.,1
+DOM-012,Domestic Operations,Linens,Matching towels,Coordination of towels presented to guests.,0
+DOM-013,Domestic Operations,Order,Garage organization,Systematization of garage contents.,0
+DOM-014,Domestic Operations,Order,Holiday decoration restraint,Tasteful proportion of seasonal decoration.,0
+DOM-015,Domestic Operations,Grounds,Lawn stripes,Visible mowing pattern quality.,1
+DOM-016,Domestic Operations,Living Things,Dog's greeting order,Dog's preference among household members at the door.,0
+DOM-017,Domestic Operations,Living Things,Aquarium clarity,Water clarity of household aquarium.,0
+DOM-018,Domestic Operations,Living Things,Herb garden,Herbs grown and actually used.,0
+DOM-019,Domestic Operations,Living Things,Orchid rebloom,Successful rebloom of an orchid.,1
+DOM-020,Domestic Operations,Living Things,Pet's audience,Followers of an account operated on behalf of a pet.,0
+DOM-021,Domestic Operations,Kitchen,Cast iron seasoning,Condition of cast iron cookware surface.,0
+DOM-022,Domestic Operations,Kitchen,Pantry decanting,Transfer of dry goods into matching clear containers.,0
+DOM-023,Domestic Operations,Kitchen,Knife sharpening,Ability to sharpen knives at home.,0
+DOM-024,Domestic Operations,Kitchen,Storage container lids,Proportion of food containers with a corresponding lid.,1
+DOM-025,Domestic Operations,Kitchen,Espresso crema,Quality of crema on home espresso.,0
+DOM-026,Domestic Operations,Kitchen,Cookbook wear,Evidence that displayed cookbooks have been used.,0
+DOM-027,Domestic Operations,Linens,Bed made daily,Frequency of making the bed.,0
+DOM-028,Domestic Operations,Linens,Duvet cover insertion,Time to insert a duvet into its cover. Less rates higher.,0
+DOM-029,Domestic Operations,Linens,Ironing,Crease quality of ironed garments.,0
+DOM-030,Domestic Operations,Linens,Guest robe,Provision of a robe for overnight guests.,0
+DOM-031,Domestic Operations,Order,Junk drawer containment,Contents of junk drawer remain in junk drawer.,0
+DOM-032,Domestic Operations,Order,Label maker use,Use of a label maker in the home.,0
+DOM-033,Domestic Operations,Order,Cable management,Concealment of cables behind electronics.,0
+DOM-034,Domestic Operations,Order,Unannounced visit readiness,Condition of home when visited without notice.,0
+DOM-035,Domestic Operations,Order,Closet color order,Arrangement of hanging garments by color.,1
+DOM-036,Domestic Operations,Order,Document retrieval,Household documents retrievable within five minutes.,0
+DOM-037,Domestic Operations,Grounds,Leaf removal timing,Promptness of autumn leaf removal relative to the street.,0
+DOM-038,Domestic Operations,Grounds,Snow clearing,Promptness of sidewalk clearing after snowfall.,0
+DOM-039,Domestic Operations,Grounds,Hedge geometry,Regularity of hedge trimming.,0
+DOM-040,Domestic Operations,Grounds,Exterior holiday lights,Installation quality of exterior lights. Restraint is rated separately (DOM-014).,0
+DOM-041,Domestic Operations,Maintenance,Filter replacement,HVAC filter replaced on schedule.,0
+DOM-042,Domestic Operations,Maintenance,Smoke detector chirp,Time between low-battery chirp and resolution. Shorter rates higher.,0
+DOM-043,Domestic Operations,Maintenance,Caulk lines,Straightness of caulk in bathrooms.,0
+DOM-044,Domestic Operations,Maintenance,Silent hinges,Absence of door hinge noise.,0
+CUL-001,Cultural Holdings,Music,Knew the band first,Awareness of an artist before broad popularity.,0
+CUL-002,Cultural Holdings,Music,Vinyl collection,Size and credibility of record collection.,0
+CUL-003,Cultural Holdings,Dining,Menu pronunciation,Correct pronunciation of foreign menu items.,0
+CUL-004,Cultural Holdings,Dining,Wine vocabulary,Fluency in describing wine.,0
+CUL-005,Cultural Holdings,Dining,Cheese knowledge,Familiarity with obscure cheeses.,0
+CUL-006,Cultural Holdings,Dining,Reservations secured,Ability to obtain reservations at difficult restaurants.,0
+CUL-007,Cultural Holdings,Literature,Books read this year (claimed),Number of books reportedly read this year.,0
+CUL-008,Cultural Holdings,Literature,Books read this year (actual),Number of books actually read this year.,0
+CUL-009,Cultural Holdings,Arts,Museum membership tier,Level of museum membership held.,0
+CUL-010,Cultural Holdings,Arts,Film opinions taken seriously,Weight others give to subject's film opinions.,0
+CUL-011,Cultural Holdings,Arts,Has seen the original,Familiarity with the original version of a remade work.,0
+CUL-012,Cultural Holdings,Arts,Opinions on typography,Possession of informed views on typefaces.,1
+CUL-013,Cultural Holdings,Worldliness,Languages spoken,Number of languages spoken conversationally.,0
+CUL-014,Cultural Holdings,Worldliness,Countries visited,Number of countries visited.,0
+CUL-015,Cultural Holdings,Language,Correct use of literally,Accuracy of usage.,0
+CUL-016,Cultural Holdings,Music,Concert venue size (at the time),Size of venue when subject first saw an artist. Smaller rates higher.,0
+CUL-017,Cultural Holdings,Music,Gathering playlist approval,Approval of subject's selections when controlling the music.,0
+CUL-018,Cultural Holdings,Music,Audio equipment,Quality of home audio equipment.,0
+CUL-019,Cultural Holdings,Music,Unofficial recordings,Possession of unreleased recordings of a performance.,1
+CUL-020,Cultural Holdings,Music,Music theory,Ability to explain why a song works.,0
+CUL-021,Cultural Holdings,Dining,Ordering for the table,Being trusted to order for a group.,0
+CUL-022,Cultural Holdings,Dining,Chopstick technique,Proficiency with chopsticks.,0
+CUL-023,Cultural Holdings,Dining,Natural wine position,Possession of a position on natural wine.,0
+CUL-024,Cultural Holdings,Dining,Ate there before the review,Visited a restaurant before it was reviewed favorably.,0
+CUL-025,Cultural Holdings,Dining,Coffee origin,Ability to name the origin of one's coffee.,0
+CUL-026,Cultural Holdings,Dining,Tasting menus completed,Number of tasting menus completed.,1
+CUL-027,Cultural Holdings,Literature,Reads in the original,Reads works in their original language.,0
+CUL-028,Cultural Holdings,Literature,Book club selection,Choosing the book in a book club.,0
+CUL-029,Cultural Holdings,Literature,Long classics finished,"Long classic novels finished, as distinct from begun.",0
+CUL-030,Cultural Holdings,Literature,Poem recitation,Ability to recite a poem from memory.,1
+CUL-031,Cultural Holdings,Literature,Bookshelf arrangement,Deliberateness of home bookshelf arrangement.,0
+CUL-032,Cultural Holdings,Literature,Library card,Active use of a public library card.,0
+CUL-033,Cultural Holdings,Arts,Original art owned,Ownership of an original artwork not made by a relative.,0
+CUL-034,Cultural Holdings,Arts,Gallery opening invitations,Invitations to gallery openings received.,0
+CUL-035,Cultural Holdings,Arts,Theater subscription,Season tickets held.,0
+CUL-036,Cultural Holdings,Arts,Architectural vocabulary,Ability to name the style of a building.,0
+CUL-037,Cultural Holdings,Arts,Camera in manual mode,Use of manual camera settings.,0
+CUL-038,Cultural Holdings,Worldliness,Passport stamps,Visible stamps in current passport.,0
+CUL-039,Cultural Holdings,Worldliness,Lived abroad,Residence in another country for six months or more.,0
+CUL-040,Cultural Holdings,Worldliness,Travel without itinerary,Comfort traveling without fixed plans.,0
+CUL-041,Cultural Holdings,Worldliness,Foreign city recommendations,Ability to provide personal recommendations in cities abroad.,0
+CUL-042,Cultural Holdings,Language,Vocabulary (spontaneous),Use of uncommon words without apparent effort.,0
+CUL-043,Cultural Holdings,Language,Fewer and less,Correct usage.,0
+CUL-044,Cultural Holdings,Language,Handwriting,Legibility and character of handwriting.,0
+CUL-045,Cultural Holdings,Language,Semicolons,Correct use of semicolons in casual writing.,1
+PRO-001,Procedural Competence,Vehicles,Parallel parking under observation,Parking success while being watched.,0
+PRO-002,Procedural Competence,Vehicles,Dashboard light knowledge,Ability to identify warning lights without the manual.,0
+PRO-003,Procedural Competence,Vehicles,Jump-starting a car,Ability to jump-start a vehicle without consulting anyone.,0
+PRO-004,Procedural Competence,Vehicles,Highway merging,Confidence and timing when merging.,0
+PRO-005,Procedural Competence,Vehicles,Navigation without GPS,Ability to reach destinations unaided.,0
+PRO-006,Procedural Competence,Transactions,Splitting a check,Dividing a bill without visible arithmetic.,0
+PRO-007,Procedural Competence,Transactions,Dealership negotiation,Outcome of vehicle price negotiation.,0
+PRO-008,Procedural Competence,Transactions,Sending food back,Ability to return an unsatisfactory dish without apology.,0
+PRO-009,Procedural Competence,Household,Speaking with tradespeople,Ability to discuss repairs credibly.,0
+PRO-010,Procedural Competence,Household,Furniture assembly,Completion with no leftover parts.,0
+PRO-011,Procedural Competence,Food,Carving in public,Carving a roast before an audience.,0
+PRO-012,Procedural Competence,Food,Grill doneness,Accuracy of doneness by eye.,0
+PRO-013,Procedural Competence,Food,Opening wine with a cork,Extraction without fragmentation.,0
+PRO-014,Procedural Competence,Travel,Airport security efficiency,Speed and composure at screening.,0
+PRO-015,Procedural Competence,Memory,Remembering birthdays,Recall of others' birthdays without reminders.,0
+PRO-016,Procedural Competence,Vehicles,Reversing a trailer,Backing a trailer without repeated attempts.,0
+PRO-017,Procedural Competence,Vehicles,Roadside tire change,Changing a tire unaided.,0
+PRO-018,Procedural Competence,Vehicles,Manual transmission,Ability to drive a manual transmission.,0
+PRO-019,Procedural Competence,Vehicles,Car wash alignment,Alignment on an automated car wash track on the first attempt.,1
+PRO-020,Procedural Competence,Transactions,Tip calculation,Calculation of a tip without a device.,0
+PRO-021,Procedural Competence,Transactions,Haggling,Price reduction obtained in markets.,0
+PRO-022,Procedural Competence,Transactions,Receiptless returns,Successful return of goods without proof of purchase.,0
+PRO-023,Procedural Competence,Transactions,Upgrades obtained,Frequency of complimentary upgrades.,0
+PRO-024,Procedural Competence,Transactions,Bar service attention,Time to be served at a crowded bar. Less rates higher.,0
+PRO-025,Procedural Competence,Household,Unclogging a drain,Resolution without professional assistance.,0
+PRO-026,Procedural Competence,Household,Locating studs,Locating wall studs without a detector.,0
+PRO-027,Procedural Competence,Household,Circuit breaker map,Knowledge of which breaker serves which room.,0
+PRO-028,Procedural Competence,Household,Hanging pictures level,Pictures hung level on the first attempt.,0
+PRO-029,Procedural Competence,Household,Pilot light,Relighting a pilot light without assistance.,0
+PRO-030,Procedural Competence,Household,Cutting in paint,Painting edges without masking tape.,1
+PRO-031,Procedural Competence,Food,One-handed egg cracking,Cracking an egg with one hand without shell fragments.,0
+PRO-032,Procedural Competence,Food,Pan toss,Turning food in a pan without a utensil.,0
+PRO-033,Procedural Competence,Food,Knife skills (observed),Speed and consistency of chopping when watched.,0
+PRO-034,Procedural Competence,Food,Fire building,Lighting a fire with one match.,0
+PRO-035,Procedural Competence,Food,Champagne opening,Controlled release of cork.,0
+PRO-036,Procedural Competence,Travel,Carry-on only,Travel of a week or more without checked luggage.,0
+PRO-037,Procedural Competence,Travel,Gate timing,Arrival at the gate as boarding begins.,0
+PRO-038,Procedural Competence,Travel,Foreign transit,Use of public transit in a foreign city without assistance.,0
+PRO-039,Procedural Competence,Travel,Jet lag recovery,Days to adjust after travel. Fewer rates higher.,0
+PRO-040,Procedural Competence,Memory,Names at a party,Retention of names after introductions.,0
+PRO-041,Procedural Competence,Memory,Usual orders,Recall of others' usual orders.,0
+PRO-042,Procedural Competence,Memory,Phone numbers memorized,Numbers recalled without a device.,1
+PRO-043,Procedural Competence,Social Procedure,Ending a phone call,Concluding a call without lingering.,0
+PRO-044,Procedural Competence,Social Procedure,Leaving a party,Departure without prolonged farewells.,0
+PRO-045,Procedural Competence,Social Procedure,Small talk with strangers,Sustaining conversation with an unknown person for five minutes.,0
+PRO-046,Procedural Competence,Social Procedure,Greeting selection,"Correct reading of hug, handshake or neither.",0
+PRO-047,Procedural Competence,Social Procedure,Door holding distance,Correct judgment of distance at which to hold a door.,0
+LIN-001,Lineage and Dependents,Children,Children say please unprompted,Frequency of unprompted courtesy from children.,0
+LIN-002,Lineage and Dependents,Children,Children's school,Prestige of children's school.,0
+LIN-003,Lineage and Dependents,Children,Children's extracurriculars,Range and seriousness of children's activities.,0
+LIN-004,Lineage and Dependents,Children,Music teacher's opinion of child,Apparent esteem of music teacher for child.,0
+LIN-005,Lineage and Dependents,Children,Children's height percentile,Height percentile of children.,1
+LIN-006,Lineage and Dependents,Elders,Grandmother's visible preference,Degree to which grandmother visibly prefers subject.,0
+LIN-007,Lineage and Dependents,Elders,Parental pride (expressed),Frequency of parents expressing pride.,0
+LIN-008,Lineage and Dependents,Elders,In-law approval,Approval of in-laws.,0
+LIN-009,Lineage and Dependents,Family Standing,Holiday host status,Frequency of hosting family holidays.,0
+LIN-010,Lineage and Dependents,Family Standing,Sibling ranking,Perceived rank among siblings.,0
+LIN-011,Lineage and Dependents,Family Standing,Family group chat responsiveness,Speed and warmth of replies in family group chat.,0
+LIN-012,Lineage and Dependents,Family Standing,Godparent selection,Number of times chosen as a godparent.,0
+LIN-013,Lineage and Dependents,Heritage,Interesting ancestry,Narrative quality of family history.,0
+LIN-014,Lineage and Dependents,Heritage,Dog lineage,Pedigree of household dog.,1
+LIN-015,Lineage and Dependents,Partners,Partner's job title,Formal title of subject's partner.,0
+LIN-016,Lineage and Dependents,Children,Children's reading level,Reading level relative to age.,0
+LIN-017,Lineage and Dependents,Children,Children's team placement,Level of team children are placed on.,0
+LIN-018,Lineage and Dependents,Children,Child's first word,Sophistication of child's first word.,0
+LIN-019,Lineage and Dependents,Children,Children's screen time,Daily screen time of children. Lower rates higher.,0
+LIN-020,Lineage and Dependents,Children,Children's languages,Languages spoken by children.,0
+LIN-021,Lineage and Dependents,Children,Slept through the night,Age at which child first slept through the night. Younger rates higher.,1
+LIN-022,Lineage and Dependents,Children,Children's birthday parties,Scale and originality of children's birthday parties.,0
+LIN-023,Lineage and Dependents,Children,Children's thank-you notes,Handwritten notes sent by children.,0
+LIN-024,Lineage and Dependents,Elders,Parents' retirement destination,Desirability of parents' retirement location.,0
+LIN-025,Lineage and Dependents,Elders,Grandparent stories,Quality of grandparents' stories.,0
+LIN-026,Lineage and Dependents,Elders,Parents' approval of partner,Approval of subject's partner by subject's parents.,0
+LIN-027,Lineage and Dependents,Elders,Consulted by parents,Frequency of parents seeking subject's advice.,1
+LIN-028,Lineage and Dependents,Family Standing,Holiday table position,Proximity to the head of the table.,0
+LIN-029,Lineage and Dependents,Family Standing,Framed photo placement,Position in framed family photographs at parents' home.,0
+LIN-030,Lineage and Dependents,Family Standing,Heirlooms designated,Family heirlooms designated for subject.,0
+LIN-031,Lineage and Dependents,Family Standing,Career relative to siblings,Subject's career relative to siblings' careers.,0
+LIN-032,Lineage and Dependents,Family Standing,Cousin ranking,Standing among cousins.,0
+LIN-033,Lineage and Dependents,Family Standing,Family recipe custody,Entrusted with family recipes.,1
+LIN-034,Lineage and Dependents,Heritage,Family crest (claimed),"Possession of a family crest, as claimed.",0
+LIN-035,Lineage and Dependents,Heritage,Surname pronunciation,Frequency of surname pronounced correctly by strangers.,0
+LIN-036,Lineage and Dependents,Heritage,Notable relative,Relation to a person of local renown.,0
+LIN-037,Lineage and Dependents,Heritage,Family home,Continuous family ownership of a residence.,0
+LIN-038,Lineage and Dependents,Partners,Partner's education,Highest degree held by subject's partner.,0
+LIN-039,Lineage and Dependents,Partners,Partner's friends' regard,Regard in which partner's friends hold subject.,0
+LIN-040,Lineage and Dependents,Partners,Partner's family means,Financial position of partner's family.,0
+LIN-041,Lineage and Dependents,Partners,Proposal narrative,Narrative quality of the proposal.,0
+LIN-042,Lineage and Dependents,Partners,Engagement ring (estimated),Estimated value of engagement ring.,0
+TEM-001,Temporal Performance,Response,Text reply speed,Speed of subject's replies to texts.,0
+TEM-002,Temporal Performance,Response,Their reply speed to you,Speed of Comparable's replies to subject's texts.,0
+TEM-003,Temporal Performance,Response,Inbox zero,Frequency of an empty inbox.,0
+TEM-004,Temporal Performance,Daily,Wake time,Earliness of waking.,0
+TEM-005,Temporal Performance,Daily,Morning routine,Sophistication of morning routine.,0
+TEM-006,Temporal Performance,Daily,Sleep quality (claimed),Sleep quality as reported.,0
+TEM-007,Temporal Performance,Daily,Punctuality,Arriving exactly on time.,0
+TEM-008,Temporal Performance,Apparent Ease,Appears less busy,Degree of apparent leisure despite success.,0
+TEM-009,Temporal Performance,Apparent Ease,Weekend productivity,Accomplishments reported on Mondays.,0
+TEM-010,Temporal Performance,Apparent Ease,Vacation days taken,Number of vacation days taken per year.,0
+TEM-011,Temporal Performance,Milestones,Life together by thirty,Apparent completeness of life at age thirty.,0
+TEM-012,Temporal Performance,Milestones,Age at first home purchase,Younger rates higher.,0
+TEM-013,Temporal Performance,Milestones,Age at major milestones (general),Earliness of reaching expected life milestones.,0
+TEM-014,Temporal Performance,Milestones,Projects finished,Proportion of started projects completed.,0
+TEM-015,Temporal Performance,Milestones,Peaked (has not yet),Confidence that subject's best years remain ahead.,1
+TEM-016,Temporal Performance,Response,Voicemail backlog,Unheard voicemails. Fewer rates higher.,0
+TEM-017,Temporal Performance,Response,Calendar invite response,Speed of accepting or declining invitations.,0
+TEM-018,Temporal Performance,Response,Missed call return,Time to return a missed call.,0
+TEM-019,Temporal Performance,Response,Reply proportion,Length of reply relative to message received.,0
+TEM-020,Temporal Performance,Response,Typing indicator duration,Time between typing indicator and arrival of message.,1
+TEM-021,Temporal Performance,Daily,Bedtime consistency,Regularity of bedtime.,0
+TEM-022,Temporal Performance,Daily,Exercise before work,Frequency of exercise completed before the workday.,0
+TEM-023,Temporal Performance,Daily,Lunch away from desk,Frequency of eating lunch elsewhere than at the desk.,0
+TEM-024,Temporal Performance,Daily,Alarm snoozes,Snooze presses per morning. Fewer rates higher.,0
+TEM-025,Temporal Performance,Daily,Water bottle,Carrying a water bottle in public.,0
+TEM-026,Temporal Performance,Daily,Steps (disclosed),"Daily step count, when mentioned.",0
+TEM-027,Temporal Performance,Apparent Ease,Hobbies maintained,Hobbies sustained despite career.,0
+TEM-028,Temporal Performance,Apparent Ease,News awareness,Awareness of developments before they are mentioned.,0
+TEM-029,Temporal Performance,Apparent Ease,Appears rested,Visible restedness.,0
+TEM-030,Temporal Performance,Apparent Ease,Unhurried arrival,Arrival at events without visible hurry.,0
+TEM-031,Temporal Performance,Apparent Ease,Weekend availability,Availability at short notice without appearing unoccupied.,1
+TEM-032,Temporal Performance,Milestones,Age at first promotion,Younger rates higher.,0
+TEM-033,Temporal Performance,Milestones,Marriage timing (cohort),Age at marriage relative to graduating class.,0
+TEM-034,Temporal Performance,Milestones,First child timing (cohort),Age at first child relative to graduating class.,0
+TEM-035,Temporal Performance,Milestones,Married before younger sibling,Sequence of marriages among siblings.,0
+TEM-036,Temporal Performance,Milestones,Educational debt retired,Age at elimination of educational debt. Younger rates higher.,0
+TEM-037,Temporal Performance,Milestones,Personal records this year,Number of new personal records set.,0
+TEM-038,Temporal Performance,Longevity,Childhood friend contact,Frequency of contact with a friend from childhood.,0
+TEM-039,Temporal Performance,Longevity,Employer tenure (calibrated),Tenure calibrated to appear neither stagnant nor unstable.,0
+TEM-040,Temporal Performance,Longevity,Streaks maintained,Longest current daily streak in any application.,0
+TEM-041,Temporal Performance,Longevity,Running distance this year,Distance run year to date.,0
+DIG-001,Digital Presence,Audience,Follower count,Total followers across platforms.,0
+DIG-002,Digital Presence,Audience,Engagement rate,Responses per post relative to followers.,0
+DIG-003,Digital Presence,Audience,Mildly viral posts,Posts that briefly circulated beyond the usual audience.,0
+DIG-004,Digital Presence,Audience,Podcast appearances,Times appeared as a podcast guest.,0
+DIG-005,Digital Presence,Audience,Being quoted,Times quoted by others online.,0
+DIG-006,Digital Presence,Profile,Profile photo,Quality of current profile photo.,0
+DIG-007,Digital Presence,Profile,Bio wit,Cleverness of profile biography.,0
+DIG-008,Digital Presence,Profile,Verified status,Holds verification on any platform.,0
+DIG-009,Digital Presence,Profile,Personal domain name,Ownership of a domain matching one's name.,0
+DIG-010,Digital Presence,Profile,Email signature,Sophistication of email signature.,0
+DIG-011,Digital Presence,Conduct,Photo dump curation,Composition of multi-photo posts.,0
+DIG-012,Digital Presence,Conduct,Close friends list inclusion,Inclusion in others' restricted sharing lists.,0
+DIG-013,Digital Presence,Conduct,Comment section friendliness,Warmth of replies to subject's posts.,0
+DIG-014,Digital Presence,Conduct,Screen time,Daily screen time. Lower rates higher.,0
+DIG-015,Digital Presence,Conduct,Read receipts disabled,Confidence to leave messages read without acknowledgment.,1
+DIG-016,Digital Presence,Audience,Shares,Times subject's posts are shared by others.,0
+DIG-017,Digital Presence,Audience,Newsletter subscribers,Subscribers to subject's newsletter.,0
+DIG-018,Digital Presence,Audience,Followed back by larger accounts,Accounts with more followers that follow subject.,0
+DIG-019,Digital Presence,Audience,Story views,Average views per story.,0
+DIG-020,Digital Presence,Audience,Mentioned by larger accounts,Mentions by accounts with more followers.,0
+DIG-021,Digital Presence,Audience,Saves,Times subject's posts are saved for later.,1
+DIG-022,Digital Presence,Profile,Username length,Characters in username. Fewer rates higher.,0
+DIG-023,Digital Presence,Profile,Early adoption,Account creation date on new platforms. Earlier rates higher.,0
+DIG-024,Digital Presence,Profile,Banner image,Quality of profile banner.,0
+DIG-025,Digital Presence,Profile,Pinned post,Quality of post chosen for permanent display.,0
+DIG-026,Digital Presence,Profile,Profile completeness,All fields completed without appearing to have tried.,0
+DIG-027,Digital Presence,Conduct,Posting frequency (calibrated),Frequency neither absent nor excessive.,0
+DIG-028,Digital Presence,Conduct,Typos in posts,Fewer rates higher.,0
+DIG-029,Digital Presence,Conduct,Emoji restraint,Proportion of messages without emoji.,0
+DIG-030,Digital Presence,Conduct,Caption brevity,Length of captions. Shorter rates higher.,0
+DIG-031,Digital Presence,Conduct,Vacation post timing,Posting after return rather than during travel.,1
+DIG-032,Digital Presence,Conduct,Unfollows,Unfollows by acquaintances. Fewer rates higher.,0
+DIG-033,Digital Presence,Devices,Phone model recency,Recency of primary phone.,0
+DIG-034,Digital Presence,Devices,Screen integrity,Condition of phone screen.,0
+DIG-035,Digital Presence,Devices,Laptop stickers (curated),Curation of laptop stickers. Includes the choice to have none.,0
+DIG-036,Digital Presence,Devices,Notification badges,Unread badges on home screen. Fewer rates higher.,0
+DIG-037,Digital Presence,Devices,Home screen organization,Arrangement of applications.,0
+DIG-038,Digital Presence,Devices,Battery level (observed),Charge level when phone is seen by others.,0
+DIG-039,Digital Presence,Devices,Smart home integration,Household functions controllable by voice.,0
+DIG-040,Digital Presence,Devices,Password manager,Use of a password manager.,0
+MOR-001,Moral and Spiritual Standing,Conduct,Kindness to servers,Treatment of restaurant staff.,0
+MOR-002,Moral and Spiritual Standing,Conduct,Patience in traffic,Composure while driving in congestion.,0
+MOR-003,Moral and Spiritual Standing,Conduct,Apologizes well,Quality of apologies.,0
+MOR-004,Moral and Spiritual Standing,Conduct,Never gossips (claimed),Abstention from gossip as stated.,0
+MOR-005,Moral and Spiritual Standing,Conduct,Remembers others' problems,Follow-up on others' difficulties.,0
+MOR-006,Moral and Spiritual Standing,Contribution,Volunteer hours,Hours volunteered per year.,0
+MOR-007,Moral and Spiritual Standing,Contribution,Charitable giving (visible),Publicly known charitable contributions.,0
+MOR-008,Moral and Spiritual Standing,Environment,Recycling compliance,Correct sorting of recyclables.,0
+MOR-009,Moral and Spiritual Standing,Environment,Composting,Maintenance of a compost system.,0
+MOR-010,Moral and Spiritual Standing,Environment,Ethical consumer choices,Alignment of purchases with stated values.,0
+MOR-011,Moral and Spiritual Standing,Interior Life,Meditation streak,Consecutive days of meditation.,0
+MOR-012,Moral and Spiritual Standing,Interior Life,Inner peace (apparent),Visible calm.,0
+MOR-013,Moral and Spiritual Standing,Interior Life,Forgiving nature (claimed),Willingness to forgive as stated.,0
+MOR-014,Moral and Spiritual Standing,Interior Life,Humility,Humility and the recognition by others of that humility.,0
+MOR-015,Moral and Spiritual Standing,Interior Life,Moral consistency,Alignment between stated principles and conduct.,0
+MOR-016,Moral and Spiritual Standing,Conduct,Shopping cart returned,Returning the cart to the corral.,0
+MOR-017,Moral and Spiritual Standing,Conduct,Allows merging,Letting other drivers merge.,0
+MOR-018,Moral and Spiritual Standing,Conduct,Litter retrieval,Disposal of litter not one's own.,0
+MOR-019,Moral and Spiritual Standing,Conduct,Unobserved tipping,Tipping generosity when unobserved. Observation not available; estimate.,0
+MOR-020,Moral and Spiritual Standing,Conduct,Server's name,Remembering the name of restaurant staff.,0
+MOR-021,Moral and Spiritual Standing,Conduct,Grudges held (apparent),Fewer rates higher.,0
+MOR-022,Moral and Spiritual Standing,Contribution,Blood donation,Donations per year.,0
+MOR-023,Moral and Spiritual Standing,Contribution,Organ donor registration,Registered as an organ donor.,0
+MOR-024,Moral and Spiritual Standing,Contribution,Bake sale contributions,Quality of items contributed to fundraising sales.,0
+MOR-025,Moral and Spiritual Standing,Contribution,Mentees,People who credit subject as a mentor.,0
+MOR-026,Moral and Spiritual Standing,Contribution,Nonprofit board seat,Membership on a nonprofit board.,0
+MOR-027,Moral and Spiritual Standing,Contribution,Sponsored events,Participation in sponsored fundraising events.,0
+MOR-028,Moral and Spiritual Standing,Environment,Reusable bags remembered,Bringing reusable bags without returning to the car.,0
+MOR-029,Moral and Spiritual Standing,Environment,Cycling commute,Frequency of commuting by bicycle.,0
+MOR-030,Moral and Spiritual Standing,Environment,Thermostat discipline,Restraint in heating and cooling.,0
+MOR-031,Moral and Spiritual Standing,Environment,Secondhand clothing (credible),Garments acquired secondhand that are complimented.,0
+MOR-032,Moral and Spiritual Standing,Interior Life,Journaling,Consistency of journaling practice.,0
+MOR-033,Moral and Spiritual Standing,Interior Life,Gratitude practice (disclosed),"Gratitude practice, as mentioned.",0
+MOR-034,Moral and Spiritual Standing,Interior Life,Absence of envy,Freedom from envy toward others. Scored by subject.,1
+MOR-035,Moral and Spiritual Standing,Interior Life,Purpose (articulated),Ability to state one's purpose in one sentence.,0
+MOR-036,Moral and Spiritual Standing,Practice,Retreats attended,Silent or contemplative retreats attended.,0
+MOR-037,Moral and Spiritual Standing,Practice,Years of practice,Duration of a contemplative or physical practice.,0
+MOR-038,Moral and Spiritual Standing,Practice,Weekly rest observed,Observance of a regular day of rest.,0
+MOR-039,Moral and Spiritual Standing,Practice,Knows the words,Familiarity with the words of communal songs or readings.,0
+LEI-001,Leisure and Experience,Travel,Vacation destinations,Desirability of recent vacation destinations.,0
+LEI-002,Leisure and Experience,Sport,Ski ability,Difficulty of runs skied without falling.,0
+LEI-003,Leisure and Experience,Sport,Golf handicap,Lower rates higher.,0
+LEI-004,Leisure and Experience,Sport,Marathon completion,Marathons completed.,0
+LEI-005,Leisure and Experience,Games,Board game victories,Win rate at board games.,0
+LEI-006,Leisure and Experience,Games,Trivia night performance,Contribution to trivia team.,0
+LEI-007,Leisure and Experience,Performance,Karaoke reception,Audience response to karaoke.,0
+LEI-008,Leisure and Experience,Performance,Instrument proficiency,Ability to play an instrument when one is available at a party.,0
+LEI-009,Leisure and Experience,Outdoors,Camping competence,Self-sufficiency while camping.,0
+LEI-010,Leisure and Experience,Outdoors,Sunburn avoidance,Returning from outdoor events without a burn.,0
+LEI-011,Leisure and Experience,Outdoors,Fishing stories,Quality and credibility of fishing anecdotes.,0
+LEI-012,Leisure and Experience,Food,Signature dish,Possession of a dish others request.,0
+LEI-013,Leisure and Experience,Food,Hot sauce tolerance,Heat level consumed without visible distress.,1
+LEI-014,Leisure and Experience,Hobbies,Hobby proficiency,Skill level in primary hobby.,0
+LEI-015,Leisure and Experience,Hobbies,Beach reading,Literary weight of book read on the beach.,1
+LEI-016,Leisure and Experience,Travel,Lounge access,Access to airport lounges.,0
+LEI-017,Leisure and Experience,Travel,Points balance,Accumulated travel reward points.,0
+LEI-018,Leisure and Experience,Travel,Off-season travel,Travel to destinations outside peak season.,0
+LEI-019,Leisure and Experience,Travel,Undiscovered places,Visits to places later described as undiscovered.,0
+LEI-020,Leisure and Experience,Travel,Bucket list completion,Items completed from a stated list.,0
+LEI-021,Leisure and Experience,Travel,Travel photography displayed,Travel photographs framed in the home.,0
+LEI-022,Leisure and Experience,Sport,Tennis serve,Speed and placement of serve.,0
+LEI-023,Leisure and Experience,Sport,Surfing,Waves caught and ridden.,0
+LEI-024,Leisure and Experience,Sport,Climbing grade,Hardest route climbed.,0
+LEI-025,Leisure and Experience,Sport,Bicycle cost,Value of primary bicycle.,0
+LEI-026,Leisure and Experience,Sport,Open water swimming,Comfort swimming out of depth in open water.,0
+LEI-027,Leisure and Experience,Sport,Pickup team selection,Order picked in informal team selection. Earlier rates higher.,1
+LEI-028,Leisure and Experience,Games,Chess rating,"Rating, where held.",0
+LEI-029,Leisure and Experience,Games,Crossword time,Completion time for a daily crossword. Less rates higher.,0
+LEI-030,Leisure and Experience,Games,Poker night results,Net results at recurring poker games.,0
+LEI-031,Leisure and Experience,Games,Fantasy league standing,Final standing in fantasy sports leagues.,0
+LEI-032,Leisure and Experience,Games,Video game rank (claimed),"Competitive rank, as claimed.",0
+LEI-033,Leisure and Experience,Performance,Speeches received,Audience response to speeches at events.,0
+LEI-034,Leisure and Experience,Performance,Charades,Team success when acting.,0
+LEI-035,Leisure and Experience,Performance,Unaccompanied singing,Willingness and ability to sing without accompaniment.,1
+LEI-036,Leisure and Experience,Outdoors,Hike difficulty,Difficulty of trails completed.,0
+LEI-037,Leisure and Experience,Outdoors,Paddling,Competence in a kayak or canoe.,0
+LEI-038,Leisure and Experience,Outdoors,Bird identification,Birds identified by sight or song.,0
+LEI-039,Leisure and Experience,Outdoors,Tree identification,Trees identified by leaf or bark.,0
+LEI-040,Leisure and Experience,Outdoors,Tent pitching,Time to pitch a tent. Less rates higher.,0
+LEI-041,Leisure and Experience,Food,Proprietary rub,Possession of a barbecue rub not disclosed to others.,0
+LEI-042,Leisure and Experience,Food,Cocktail mixing,Quality of cocktails made at home.,0
+LEI-043,Leisure and Experience,Food,Home-baked bread,Quality and frequency of bread baked at home.,0
+LEI-044,Leisure and Experience,Food,Foraging,Edible plants and fungi identified with confidence.,1
+LEI-045,Leisure and Experience,Hobbies,Hobby equipment value,Value of equipment for primary hobby.,0
+LEI-046,Leisure and Experience,Hobbies,Woodworking,Furniture or objects built.,0
+LEI-047,Leisure and Experience,Hobbies,Garden yield,Produce harvested from home garden.,0
+LEI-048,Leisure and Experience,Hobbies,Home brewing,"Quality of beer, wine or cider made at home.",0
+LEI-049,Leisure and Experience,Hobbies,Collection completeness,Completeness of a declared collection.,0

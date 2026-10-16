@@ -1,0 +1,13 @@
+/target
+**/*.rs.bk
+*.pending-snap
+.DS_Store
+.vscode/
+.idea/
+
+# Packaged builds
+/dist
+
+# Demonstration profile (recreate with demo/seed.py)
+/demo/*.sqlite3*
+/demo/settings.json

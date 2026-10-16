@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Standing
+Comment=Personal Standing Index and comparison terminal
+Exec=standing
+Icon=standing
+Categories=Office;Finance;
+Terminal=false
+StartupWMClass=standing
