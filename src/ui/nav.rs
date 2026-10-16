@@ -1,10 +1,10 @@
 use egui::{RichText, Sense, Ui};
 
-use crate::app::{Profile, Screen};
+use crate::app::{Screen, Session};
 use crate::copy;
 use crate::theme::{self, Palette, space};
 
-pub fn show(ui: &mut Ui, p: &Palette, screen: &mut Screen, profile: &Profile) {
+pub fn show(ui: &mut Ui, p: &Palette, screen: &mut Screen, session: &Session) {
     ui.add_space(space::XS);
     ui.horizontal(|ui| {
         ui.spacing_mut().item_spacing.x = space::SM + 2.0;
@@ -17,7 +17,7 @@ pub fn show(ui: &mut Ui, p: &Palette, screen: &mut Screen, profile: &Profile) {
                 .color(p.text_primary),
         );
     });
-    ui.add_space(space::XL);
+    ui.add_space(space::LG);
 
     section(ui, p, copy::nav::SECTION_MARKET);
     for s in [
@@ -28,12 +28,12 @@ pub fn show(ui: &mut Ui, p: &Palette, screen: &mut Screen, profile: &Profile) {
     ] {
         item(ui, p, screen, s);
     }
-    ui.add_space(space::LG);
+    ui.add_space(space::MD);
     section(ui, p, copy::nav::SECTION_REFERENCE);
     for s in [Screen::Catalog, Screen::Threshold, Screen::Reports] {
         item(ui, p, screen, s);
     }
-    ui.add_space(space::LG);
+    ui.add_space(space::MD);
     section(ui, p, copy::nav::SECTION_SYSTEM);
     item(ui, p, screen, Screen::Settings);
 
@@ -47,7 +47,7 @@ pub fn show(ui: &mut Ui, p: &Palette, screen: &mut Screen, profile: &Profile) {
         ui.label(small(format!(
             "{} {}",
             copy::status::SCHEMA_VERSION,
-            profile.schema_version
+            session.schema_version
         )));
         ui.horizontal(|ui| {
             let (rect, _) = ui.allocate_exact_size(egui::vec2(6.0, 6.0), Sense::hover());

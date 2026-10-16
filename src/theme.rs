@@ -18,6 +18,8 @@ pub struct Palette {
     pub text_primary: Color32,
     pub text_secondary: Color32,
     pub accent: Color32,
+    /// Text drawn on an accent fill.
+    pub on_accent: Color32,
     pub danger: Color32,
 }
 
@@ -28,6 +30,7 @@ pub const LIGHT: Palette = Palette {
     text_primary: Color32::from_rgb(0x1B, 0x1D, 0x20),
     text_secondary: Color32::from_rgb(0x6A, 0x68, 0x63),
     accent: Color32::from_rgb(0x23, 0x45, 0x6B),
+    on_accent: Color32::from_rgb(0xFB, 0xFA, 0xF7),
     danger: Color32::from_rgb(0x9A, 0x2B, 0x2B),
 };
 
@@ -38,6 +41,7 @@ pub const DARK: Palette = Palette {
     text_primary: Color32::from_rgb(0xE6, 0xE3, 0xDC),
     text_secondary: Color32::from_rgb(0x98, 0x95, 0x8D),
     accent: Color32::from_rgb(0x8F, 0xB0, 0xD4),
+    on_accent: Color32::from_rgb(0x12, 0x14, 0x16),
     danger: Color32::from_rgb(0xDE, 0x7A, 0x72),
 };
 

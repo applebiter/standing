@@ -28,10 +28,13 @@ CREATE TABLE dimensions (
   discovered_at TEXT
 ) WITHOUT ROWID;
 
+-- Rows are deleted only at the user's request, with their ratings, events
+-- and snapshots. Removal from the peer set clears `active` instead.
 CREATE TABLE comparables (
   id                 INTEGER PRIMARY KEY AUTOINCREMENT,
   name               TEXT NOT NULL,
   relationship       TEXT,
+  ticker             TEXT NOT NULL UNIQUE,
   origin             TEXT NOT NULL CHECK (origin IN ('user', 'archetype')),
   archetype_template TEXT,
   claimed_at         TEXT,

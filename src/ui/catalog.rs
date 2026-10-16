@@ -5,7 +5,7 @@ use std::collections::BTreeSet;
 use egui::{Align, Layout, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
 
-use crate::app::Profile;
+use crate::app::Session;
 use crate::db::dimensions;
 use crate::model::dimension::{Dimension, DimensionState};
 use crate::theme::{self, Palette, space};
@@ -76,16 +76,21 @@ impl Filters {
 #[derive(Default)]
 pub struct State {
     dimensions: Option<Vec<Dimension>>,
+    /// The session revision `dimensions` was loaded at.
+    revision: u64,
     filters: Filters,
     error: Option<String>,
 }
 
-pub fn show(ui: &mut Ui, p: &Palette, profile: &mut Profile, state: &mut State) {
+pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) {
     super::screen_header(ui, p, copy::catalog::TITLE, &copy::catalog::subtitle());
 
-    if state.dimensions.is_none() {
-        match dimensions::visible(&profile.conn) {
-            Ok(d) => state.dimensions = Some(d),
+    if state.dimensions.is_none() || state.revision != session.revision {
+        match dimensions::visible(&session.conn) {
+            Ok(d) => {
+                state.dimensions = Some(d);
+                state.revision = session.revision;
+            }
             Err(e) => state.error = Some(format!("{} {e:#}", copy::catalog::LOAD_FAILED)),
         }
     }
@@ -125,11 +130,13 @@ pub fn show(ui: &mut Ui, p: &Palette, profile: &mut Profile, state: &mut State) 
     }
 
     if let Some((id, applies)) = table(ui, p, dims, &shown) {
-        match dimensions::set_applies(&profile.conn, &id, applies) {
+        match dimensions::set_applies(&session.conn, &id, applies) {
             Ok(()) => {
                 if let Some(d) = dims.iter_mut().find(|d| d.id == id) {
                     d.applies = applies;
                 }
+                session.revision += 1;
+                state.revision = session.revision;
                 state.error = None;
             }
             Err(e) => state.error = Some(format!("{} {e:#}", copy::catalog::SAVE_FAILED)),

@@ -3,6 +3,7 @@
 use egui::ThemePreference;
 use rusqlite::Connection;
 
+use crate::model::user::UserProfile;
 use crate::settings::{Paths, Settings, ThemeChoice};
 use crate::{catalog, copy, db, theme, ui};
 
@@ -34,31 +35,37 @@ impl Screen {
 }
 
 /// Everything a screen may need. Exists only once the database is open.
-pub struct Profile {
+pub struct Session {
     pub conn: Connection,
     pub paths: Paths,
     pub settings: Settings,
     pub schema_version: usize,
+    pub user: UserProfile,
+    /// Incremented whenever the record is written, so screens know to re-query.
+    pub revision: u64,
 }
 
-impl Profile {
+impl Session {
     fn open() -> anyhow::Result<Self> {
         let paths = Paths::discover()?;
         let settings = Settings::load(&paths.settings);
         let mut conn = db::open(&paths.database)?;
         catalog::sync(&mut conn, &catalog::seed()?)?;
         let schema_version = db::schema_version(&conn)?;
+        let user = db::user::ensure(&conn, rand::random(), jiff::Timestamp::now())?;
         Ok(Self {
             conn,
             paths,
             settings,
             schema_version,
+            user,
+            revision: 0,
         })
     }
 }
 
 pub struct Standing {
-    profile: Result<Profile, String>,
+    session: Result<Session, String>,
     screen: Screen,
     ui_state: ui::State,
 }
@@ -66,12 +73,12 @@ pub struct Standing {
 impl Standing {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         theme::install(&cc.egui_ctx);
-        let profile = Profile::open().map_err(|e| format!("{e:#}"));
-        if let Ok(profile) = &profile {
-            apply_theme(&cc.egui_ctx, profile.settings.theme);
+        let session = Session::open().map_err(|e| format!("{e:#}"));
+        if let Ok(session) = &session {
+            apply_theme(&cc.egui_ctx, session.settings.theme);
         }
         Self {
-            profile,
+            session,
             screen: Screen::Dashboard,
             ui_state: ui::State::default(),
         }
@@ -90,8 +97,8 @@ impl eframe::App for Standing {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let p = *theme::palette(ui.visuals().dark_mode);
 
-        let profile = match &mut self.profile {
-            Ok(profile) => profile,
+        let session = match &mut self.session {
+            Ok(session) => session,
             Err(message) => {
                 ui::startup_error::show(ui, &p, message);
                 return;
@@ -111,7 +118,7 @@ impl eframe::App for Standing {
                         bottom: theme::space::MD as i8,
                     }),
             )
-            .show(ui, |ui| ui::nav::show(ui, &p, &mut self.screen, profile));
+            .show(ui, |ui| ui::nav::show(ui, &p, &mut self.screen, session));
 
         egui::CentralPanel::default()
             .frame(
@@ -126,14 +133,16 @@ impl eframe::App for Standing {
                 };
                 match self.screen {
                     Screen::Dashboard => pending(ui, copy::pending::DASHBOARD),
-                    Screen::Comparables => pending(ui, copy::pending::COMPARABLES),
-                    Screen::Ratings => pending(ui, copy::pending::RATINGS),
+                    Screen::Comparables => {
+                        ui::comparables::show(ui, &p, session, &mut state.comparables)
+                    }
+                    Screen::Ratings => ui::ratings::show(ui, &p, session, &mut state.ratings),
                     Screen::DailyFiling => pending(ui, copy::pending::DAILY_FILING),
-                    Screen::Catalog => ui::catalog::show(ui, &p, profile, &mut state.catalog),
+                    Screen::Catalog => ui::catalog::show(ui, &p, session, &mut state.catalog),
                     Screen::Threshold => pending(ui, copy::pending::THRESHOLD),
                     Screen::Reports => pending(ui, copy::pending::REPORTS),
                     Screen::Settings => ui::page(ui, "settings", |ui| {
-                        ui::settings::show(ui, &p, profile, &mut state.settings)
+                        ui::settings::show(ui, &p, session, &mut state.settings)
                     }),
                 }
             });

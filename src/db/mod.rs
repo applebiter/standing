@@ -1,10 +1,14 @@
 //! Storage. Free of egui so it can be unit-tested in isolation.
 
+pub mod comparables;
 pub mod dimensions;
+pub mod ratings;
 pub mod schema;
+pub mod user;
 
 use std::path::{Path, PathBuf};
 
+use jiff::Timestamp;
 use rusqlite::Connection;
 use rusqlite_migration::SchemaVersion;
 
@@ -28,6 +32,12 @@ pub enum DbError {
 }
 
 pub type Result<T> = std::result::Result<T, DbError>;
+
+/// Formats an instant for storage: UTC, fixed width, so stored values sort
+/// chronologically as text. `2026-10-16T18:04:05.123456Z`.
+pub fn stamp(t: Timestamp) -> String {
+    t.strftime("%Y-%m-%dT%H:%M:%S.%6fZ").to_string()
+}
 
 /// Opens (creating if necessary) the database at `path` and brings it to the
 /// latest schema.
@@ -76,6 +86,16 @@ mod tests {
     use super::*;
 
     const LATEST: usize = 1;
+
+    #[test]
+    fn stamps_are_fixed_width_and_round_trip() {
+        let whole: Timestamp = "2026-10-16T18:04:05Z".parse().unwrap();
+        let frac: Timestamp = "2026-10-16T18:04:05.5Z".parse().unwrap();
+        assert_eq!(stamp(whole), "2026-10-16T18:04:05.000000Z");
+        assert_eq!(stamp(frac), "2026-10-16T18:04:05.500000Z");
+        assert!(stamp(whole) < stamp(frac));
+        assert_eq!(stamp(frac).parse::<Timestamp>().unwrap(), frac);
+    }
 
     #[test]
     fn fresh_database_migrates_to_latest() {
