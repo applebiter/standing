@@ -1,5 +1,6 @@
 //! Storage. Free of egui so it can be unit-tested in isolation.
 
+pub mod dimensions;
 pub mod schema;
 
 use std::path::{Path, PathBuf};

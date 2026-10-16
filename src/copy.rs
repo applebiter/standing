@@ -5,6 +5,9 @@
 
 pub const APP_NAME: &str = "Standing";
 
+/// Edition of the Standard Classification of Comparison Dimensions.
+pub const SCCD_VERSION: &str = "4.2";
+
 pub mod nav {
     pub const DASHBOARD: &str = "Dashboard";
     pub const COMPARABLES: &str = "Comparables";
@@ -41,15 +44,53 @@ pub mod pending {
     );
     pub const DAILY_FILING: (&str, &str) =
         ("Daily Filing", "Status events for the current market day.");
-    pub const CATALOG: (&str, &str) = (
-        "Dimension Catalog",
-        "Standard Classification of Comparison Dimensions.",
-    );
     pub const THRESHOLD: (&str, &str) = (
         "Enough Threshold",
         "The index level at which you will feel secure.",
     );
     pub const REPORTS: (&str, &str) = ("Reports", "Quarterly earnings calls and exports.");
+}
+
+pub mod catalog {
+    pub const TITLE: &str = "Dimension Catalog";
+    pub fn subtitle() -> String {
+        format!(
+            "Standard Classification of Comparison Dimensions (SCCD), version {}.",
+            super::SCCD_VERSION
+        )
+    }
+
+    pub const ACTIVE_DIMENSIONS: &str = "Active dimensions";
+    pub const SECTORS: &str = "Sectors";
+    pub const INDUSTRIES: &str = "Industries";
+
+    pub const SEARCH_HINT: &str = "Search name, definition, industry or ID";
+    pub const ALL_SECTORS: &str = "All sectors";
+    pub const STATUS_ALL: &str = "All dimensions";
+    pub const STATUS_APPLIES: &str = "Applies to me";
+    pub const STATUS_EXCLUDED: &str = "Does not apply";
+    pub const STATUS_DISCOVERED: &str = "Discovered";
+    pub const CLEAR_FILTERS: &str = "Clear filters";
+    pub fn showing(shown: usize, total: usize) -> String {
+        format!(
+            "Showing {} of {} dimensions",
+            crate::format::thousands(shown as u64),
+            crate::format::thousands(total as u64)
+        )
+    }
+    pub const NO_MATCHES: &str = "No dimensions match these filters.";
+
+    pub const COL_ID: &str = "ID";
+    pub const COL_DIMENSION: &str = "Dimension";
+    pub const COL_INDUSTRY: &str = "Industry";
+    pub const COL_SECTOR: &str = "Sector";
+    pub const COL_WEIGHT: &str = "Weight";
+    pub const COL_APPLIES: &str = "Applies";
+    pub const APPLIES_HINT: &str = "Applies to me";
+    pub const DISCOVERED_TAG: &str = "Discovered";
+
+    pub const LOAD_FAILED: &str = "The catalog could not be loaded.";
+    pub const SAVE_FAILED: &str = "The change could not be saved.";
 }
 
 pub mod settings {

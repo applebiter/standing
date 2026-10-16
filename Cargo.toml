@@ -5,9 +5,11 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.104"
+csv = "1.3"
 directories = "6.0.0"
 eframe = "0.37.0"
 egui = "0.37.0"
+egui_extras = "0.37.0"
 jiff = "0.2"
 rusqlite = { version = "0.40.2", features = ["bundled"] }
 rusqlite_migration = "2.6.0"

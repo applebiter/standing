@@ -1,6 +1,9 @@
 mod app;
+mod catalog;
 mod copy;
 mod db;
+mod format;
+mod model;
 mod settings;
 mod theme;
 mod ui;

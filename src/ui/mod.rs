@@ -1,6 +1,7 @@
 //! Screens and shared widgets. The only module tree that depends on egui
 //! besides `app` and `theme`.
 
+pub mod catalog;
 pub mod nav;
 pub mod pending;
 pub mod settings;
@@ -13,6 +14,7 @@ use crate::theme::{self, Palette, space};
 /// Per-screen transient UI state that outlives a single frame.
 #[derive(Default)]
 pub struct State {
+    pub catalog: catalog::State,
     pub settings: settings::State,
 }
 

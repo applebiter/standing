@@ -4,7 +4,7 @@ use egui::ThemePreference;
 use rusqlite::Connection;
 
 use crate::settings::{Paths, Settings, ThemeChoice};
-use crate::{copy, db, theme, ui};
+use crate::{catalog, copy, db, theme, ui};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Screen {
@@ -45,7 +45,8 @@ impl Profile {
     fn open() -> anyhow::Result<Self> {
         let paths = Paths::discover()?;
         let settings = Settings::load(&paths.settings);
-        let conn = db::open(&paths.database)?;
+        let mut conn = db::open(&paths.database)?;
+        catalog::sync(&mut conn, &catalog::seed()?)?;
         let schema_version = db::schema_version(&conn)?;
         Ok(Self {
             conn,
@@ -128,7 +129,7 @@ impl eframe::App for Standing {
                     Screen::Comparables => pending(ui, copy::pending::COMPARABLES),
                     Screen::Ratings => pending(ui, copy::pending::RATINGS),
                     Screen::DailyFiling => pending(ui, copy::pending::DAILY_FILING),
-                    Screen::Catalog => pending(ui, copy::pending::CATALOG),
+                    Screen::Catalog => ui::catalog::show(ui, &p, profile, &mut state.catalog),
                     Screen::Threshold => pending(ui, copy::pending::THRESHOLD),
                     Screen::Reports => pending(ui, copy::pending::REPORTS),
                     Screen::Settings => ui::page(ui, "settings", |ui| {

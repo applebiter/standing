@@ -14,8 +14,10 @@ CREATE TABLE profile (
 
 -- Seeded from the SCCD catalog. Rows are inserted for new identifiers only;
 -- `applies`, `state` and `weight` belong to the user once a row exists.
+-- `ordinal` is the entry's position in the catalog, for display order.
 CREATE TABLE dimensions (
   id            TEXT PRIMARY KEY,
+  ordinal       INTEGER NOT NULL,
   sector        TEXT NOT NULL,
   industry      TEXT NOT NULL,
   name          TEXT NOT NULL,
