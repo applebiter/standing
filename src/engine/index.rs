@@ -103,16 +103,16 @@ fn weighted_mean(items: impl Iterator<Item = (f64, f64)>) -> Option<f64> {
     (weights > 0.0).then(|| sum / weights)
 }
 
-/// Sum of event weights, each halved for every half-life since it occurred.
-/// Events dated in the future count at full weight.
+/// An event's weight, halved for every half-life since it occurred. Events
+/// dated in the future count at full weight.
+pub fn contribution(e: &Event, now: Timestamp) -> f64 {
+    let age_days = now.duration_since(e.occurred_at).as_secs_f64() / 86_400.0;
+    e.kind.weight() * 0.5_f64.powf(age_days.max(0.0) / MOMENTUM_HALF_LIFE_DAYS)
+}
+
+/// Sum of event contributions.
 pub fn momentum<'a>(events: impl IntoIterator<Item = &'a Event>, now: Timestamp) -> f64 {
-    events
-        .into_iter()
-        .map(|e| {
-            let age_days = now.duration_since(e.occurred_at).as_secs_f64() / 86_400.0;
-            e.kind.weight() * 0.5_f64.powf(age_days.max(0.0) / MOMENTUM_HALF_LIFE_DAYS)
-        })
-        .sum()
+    events.into_iter().map(|e| contribution(e, now)).sum()
 }
 
 /// Computes the Personal Standing Index and every active Comparable's ticker.

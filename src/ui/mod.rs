@@ -5,6 +5,7 @@ pub mod catalog;
 pub mod chart;
 pub mod comparable_form;
 pub mod comparables;
+pub mod daily_filing;
 pub mod dashboard;
 pub mod form;
 pub mod nav;
@@ -23,6 +24,7 @@ use crate::theme::{self, Palette, space};
 pub struct State {
     pub catalog: catalog::State,
     pub comparables: comparables::State,
+    pub daily_filing: daily_filing::State,
     pub dashboard: dashboard::State,
     pub ratings: ratings::State,
     pub settings: settings::State,

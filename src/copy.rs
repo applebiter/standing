@@ -32,8 +32,6 @@ pub mod status {
 pub mod pending {
     pub const BODY: &str = "This module is not installed in the current build.";
 
-    pub const DAILY_FILING: (&str, &str) =
-        ("Daily Filing", "Status events for the current market day.");
     pub const THRESHOLD: (&str, &str) = (
         "Enough Threshold",
         "The index level at which you will feel secure.",
@@ -156,6 +154,93 @@ pub mod dashboard {
     pub const NOTICES: &str = "Notices";
     pub const NO_NOTICES: &str = "No notices.";
     pub const LOAD_FAILED: &str = "The dashboard could not be loaded.";
+}
+
+pub mod filing {
+    use crate::format;
+    use crate::model::event::EventKind;
+
+    pub const TITLE: &str = "Daily Filing";
+    pub const SUBTITLE: &str = "Status events, recorded as they occur.";
+    pub const FILE_AN_EVENT: &str = "File an event";
+    pub const GROUP_OWN: &str = "Concerning you";
+    pub const GROUP_OBSERVED: &str = "Observed of a Comparable. Applied to their ticker.";
+    pub const OBSERVED_NEEDS_COMPARABLES: &str =
+        "Observations require at least one Comparable in the peer set.";
+    pub const COMPARABLE: &str = "Comparable";
+    pub const CHOOSE_COMPARABLE: &str = "Select a Comparable";
+    pub const COMPARABLE_REQUIRED: &str = "Select the Comparable observed.";
+    pub const NOTE: &str = "Note";
+    pub const NOTE_HINT: &str = "e.g. at the barbecue";
+    pub const SUBMIT: &str = "File";
+
+    pub fn label(kind: EventKind) -> &'static str {
+        match kind {
+            EventKind::ComplimentReceived => "Compliment received",
+            EventKind::InvitationReceived => "Invitation received",
+            EventKind::NotInvited => "Not invited (learned of after the fact)",
+            EventKind::TextUnanswered => "Text left unanswered",
+            EventKind::Achievement => "Achievement",
+            EventKind::PublicRecognition => "Public recognition",
+            EventKind::SlightMinor => "Slight (minor)",
+            EventKind::SlightMajor => "Slight (major)",
+            EventKind::ComparableAchievement => "Observed Comparable achievement",
+            EventKind::ComparableThriving => "Comparable seen to be thriving",
+        }
+    }
+
+    pub fn description(kind: EventKind) -> &'static str {
+        match kind {
+            EventKind::ComplimentReceived => "A favorable remark about you, made to you.",
+            EventKind::InvitationReceived => "An invitation to a gathering, event or occasion.",
+            EventKind::NotInvited => "An occasion you were not invited to, learned of afterward.",
+            EventKind::TextUnanswered => "A message you sent that has not received a reply.",
+            EventKind::Achievement => "A milestone reached or an objective completed.",
+            EventKind::PublicRecognition => "Acknowledgment of you made in front of others.",
+            EventKind::SlightMinor => "A small discourtesy or omission.",
+            EventKind::SlightMajor => "A significant discourtesy or omission.",
+            EventKind::ComparableAchievement => {
+                "An achievement by a Comparable, as observed. Raises their ticker."
+            }
+            EventKind::ComparableThriving => {
+                "Evidence that a Comparable is doing well. Raises their ticker."
+            }
+        }
+    }
+
+    pub fn filed(kind: EventKind) -> String {
+        format!(
+            "Filed: {} ({}).",
+            label(kind),
+            format::signed(kind.weight())
+        )
+    }
+
+    pub const MOMENTUM: &str = "Momentum";
+    pub const FILED_TODAY: &str = "Filed today";
+    pub const MOMENTUM_NOTE: &str =
+        "Each event's contribution halves every seven days. See the Methodology.";
+    pub const RECENT: &str = "Filings, last 30 days";
+    pub const NO_FILINGS: &str = "No filings in the last 30 days.";
+    pub const COL_FILED: &str = "Filed";
+    pub const COL_EVENT: &str = "Event";
+    pub const COL_WEIGHT: &str = "Weight";
+    pub const COL_CURRENT: &str = "Now";
+
+    pub const WITHDRAW: &str = "Withdraw";
+    pub const WITHDRAW_TITLE: &str = "Withdraw this filing?";
+    pub fn withdraw_body(kind: EventKind) -> String {
+        format!(
+            "{} will be removed from the record and the index recomputed without it.",
+            label(kind)
+        )
+    }
+    pub fn withdrawn(kind: EventKind) -> String {
+        format!("Filing withdrawn: {}.", label(kind))
+    }
+
+    pub const LOAD_FAILED: &str = "Filings could not be loaded.";
+    pub const WRITE_FAILED: &str = "The filing could not be recorded.";
 }
 
 pub mod form {

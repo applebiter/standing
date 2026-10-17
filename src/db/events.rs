@@ -1,8 +1,9 @@
 //! Queries over the `events` table.
 
-use rusqlite::Connection;
+use jiff::Timestamp;
+use rusqlite::{Connection, params};
 
-use super::Result;
+use super::{Result, stamp};
 use crate::model::event::{Event, EventKind};
 
 fn conversion_error(column: usize, message: String) -> rusqlite::Error {
@@ -32,17 +33,13 @@ pub fn all(conn: &Connection) -> Result<Vec<Event>> {
 }
 
 /// Records an event.
-#[cfg(test)] // Filed from the Daily Filing screen once it is installed.
 pub fn insert(
     conn: &Connection,
     kind: EventKind,
     comparable_id: Option<i64>,
     note: Option<&str>,
-    occurred_at: jiff::Timestamp,
+    occurred_at: Timestamp,
 ) -> Result<i64> {
-    use rusqlite::params;
-
-    use super::stamp;
     conn.execute(
         "INSERT INTO events (kind, comparable_id, note, occurred_at) VALUES (?1, ?2, ?3, ?4)",
         params![kind.as_str(), comparable_id, note, stamp(occurred_at)],
@@ -50,10 +47,14 @@ pub fn insert(
     Ok(conn.last_insert_rowid())
 }
 
+/// Withdraws a filing.
+pub fn delete(conn: &Connection, id: i64) -> Result<()> {
+    conn.execute("DELETE FROM events WHERE id = ?1", [id])?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
-    use jiff::Timestamp;
-
     use super::*;
     use crate::db;
 
@@ -76,5 +77,7 @@ mod tests {
         assert_eq!(events[0].kind, EventKind::Achievement);
         assert_eq!(events[0].occurred_at, earlier);
         assert_eq!(events[1].note.as_deref(), Some("Seated last"));
+        delete(&conn, events[0].id).unwrap();
+        assert_eq!(all(&conn).unwrap().len(), 1);
     }
 }

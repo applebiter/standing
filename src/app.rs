@@ -203,7 +203,9 @@ impl eframe::App for Standing {
                         ui::comparables::show(ui, &p, session, &mut state.comparables)
                     }
                     Screen::Ratings => ui::ratings::show(ui, &p, session, &mut state.ratings),
-                    Screen::DailyFiling => pending(ui, copy::pending::DAILY_FILING),
+                    Screen::DailyFiling => ui::page(ui, "daily-filing", |ui| {
+                        ui::daily_filing::show(ui, &p, session, &mut state.daily_filing)
+                    }),
                     Screen::Catalog => ui::catalog::show(ui, &p, session, &mut state.catalog),
                     Screen::Threshold => pending(ui, copy::pending::THRESHOLD),
                     Screen::Reports => pending(ui, copy::pending::REPORTS),
