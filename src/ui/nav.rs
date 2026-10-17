@@ -25,17 +25,19 @@ pub fn show(ui: &mut Ui, p: &Palette, screen: &mut Screen, session: &Session) {
         Screen::Comparables,
         Screen::Ratings,
         Screen::DailyFiling,
+        Screen::Notices,
     ] {
-        item(ui, p, screen, s);
+        let count = (s == Screen::Notices).then_some(session.unread_notices);
+        item(ui, p, screen, s, count.filter(|n| *n > 0));
     }
     ui.add_space(space::MD);
     section(ui, p, copy::nav::SECTION_REFERENCE);
     for s in [Screen::Catalog, Screen::Threshold, Screen::Reports] {
-        item(ui, p, screen, s);
+        item(ui, p, screen, s, None);
     }
     ui.add_space(space::MD);
     section(ui, p, copy::nav::SECTION_SYSTEM);
-    item(ui, p, screen, Screen::Settings);
+    item(ui, p, screen, Screen::Settings, None);
 
     ui.with_layout(egui::Layout::bottom_up(egui::Align::Min), |ui| {
         let small = |t: String| RichText::new(t).small().color(p.text_secondary);
@@ -63,9 +65,9 @@ fn section(ui: &mut Ui, p: &Palette, label: &str) {
     ui.add_space(space::XS);
 }
 
-fn item(ui: &mut Ui, p: &Palette, current: &mut Screen, target: Screen) {
+fn item(ui: &mut Ui, p: &Palette, current: &mut Screen, target: Screen, count: Option<usize>) {
     let selected = *current == target;
-    let height = 32.0;
+    let height = 28.0;
     let (rect, response) =
         ui.allocate_exact_size(egui::vec2(ui.available_width(), height), Sense::click());
 
@@ -107,6 +109,29 @@ fn item(ui: &mut Ui, p: &Palette, current: &mut Screen, target: Screen) {
             p.text_secondary
         },
     );
+
+    if let Some(n) = count {
+        let text = if n > 99 {
+            "99+".to_owned()
+        } else {
+            n.to_string()
+        };
+        let galley = ui.painter().layout_no_wrap(
+            text,
+            egui::FontId::new(11.0, theme::family::mono_medium()),
+            p.on_accent,
+        );
+        let pill = egui::Rect::from_center_size(
+            egui::pos2(
+                rect.right() - space::SM - galley.size().x / 2.0 - 6.0,
+                rect.center().y,
+            ),
+            egui::vec2(galley.size().x + 12.0, 18.0),
+        );
+        ui.painter().rect_filled(pill, 9.0, p.accent);
+        ui.painter()
+            .galley(pill.center() - galley.size() / 2.0, galley, p.on_accent);
+    }
 
     if response
         .on_hover_cursor(egui::CursorIcon::PointingHand)

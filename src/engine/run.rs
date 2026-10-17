@@ -8,6 +8,7 @@ use jiff::civil::Date;
 use jiff::tz::TimeZone;
 use rusqlite::Connection;
 
+use super::discovery;
 use super::index::{self, ComparableRatings, Inputs, Reading, WeightedDimension};
 use super::market;
 use super::rebalance;
@@ -167,6 +168,8 @@ pub struct MarketActivity {
     pub closed: Vec<Date>,
     /// Whether the market opened for `today`.
     pub opened: bool,
+    /// The dimension discovered at today's open, if any.
+    pub discovered: Option<String>,
 }
 
 /// Closes every earlier market day not yet closed, posting each day's
@@ -183,7 +186,63 @@ pub fn market_check(
         activity.closed.push(day);
     }
     activity.opened = db::market::open(conn, today, now)?;
+    if activity.opened {
+        activity.discovered = discover(conn, now, tz)?;
+    }
     Ok(activity)
+}
+
+/// Reveals a hidden dimension if one is due, gives a Comparable a provisional
+/// lead in it, and posts a notice. Returns the dimension's name.
+fn discover(conn: &Connection, now: Timestamp, tz: &TimeZone) -> db::Result<Option<String>> {
+    let Some(profile) = db::user::get(conn)? else {
+        return Ok(None);
+    };
+    let (count, last) = db::dimensions::discovered(conn)?;
+    let since = last
+        .as_deref()
+        .unwrap_or(&profile.created_at)
+        .parse::<Timestamp>()
+        .map_or(market::day_of(now, tz), |t| market::day_of(t, tz));
+    if !discovery::due(since, market::day_of(now, tz)) {
+        return Ok(None);
+    }
+    let comparables = db::comparables::active(conn)?;
+    let ids: Vec<i64> = comparables.iter().map(|c| c.id).collect();
+    let Some(choice) = discovery::choose(
+        profile.rng_seed,
+        count,
+        &db::dimensions::hidden_ids(conn)?,
+        &ids,
+    ) else {
+        return Ok(None);
+    };
+
+    let tx = conn.unchecked_transaction()?;
+    let dimension = db::dimensions::discover(&tx, &choice.dimension_id, now)?;
+    let leader = choice
+        .leader
+        .and_then(|id| comparables.iter().find(|c| c.id == id));
+    if let Some(leader) = leader {
+        let own = db::ratings::current(&tx)?
+            .get(&(Subject::Own, dimension.id.clone()))
+            .map(|r| r.value);
+        db::ratings::insert_provisional(
+            &tx,
+            leader.id,
+            &dimension.id,
+            discovery::lead_rating(own),
+            now,
+        )?;
+    }
+    notices::insert(
+        &tx,
+        notices::kind::DISCOVERY,
+        &copy::notices::dimension_added(&dimension.name, leader.map(|c| c.name.as_str())),
+        now,
+    )?;
+    tx.commit()?;
+    Ok(Some(dimension.name))
 }
 
 fn close(conn: &Connection, day: Date, now: Timestamp, tz: &TimeZone) -> db::Result<()> {
@@ -364,6 +423,49 @@ mod tests {
     }
 
     #[test]
+    fn a_dimension_is_discovered_every_three_days_at_the_open() {
+        let conn = setup();
+        // Profile created on the 10th, New York time.
+        db::user::ensure(&conn, 42, at("2026-10-10T14:00:00Z")).unwrap();
+        let dana = db::comparables::insert(
+            &conn,
+            &ComparableFields {
+                name: "Dana".into(),
+                relationship: None,
+            },
+            at("2026-10-10T14:00:00Z"),
+        )
+        .unwrap();
+        let open = |day: &str| market_check(&conn, at(day), &tz()).unwrap().discovered;
+        assert_eq!(open("2026-10-11T14:00:00Z"), None);
+        assert_eq!(open("2026-10-12T14:00:00Z"), None);
+        assert_eq!(
+            open("2026-10-13T14:00:00Z").as_deref(),
+            Some("Sourdough starter age")
+        );
+        // A second launch the same day is not an open.
+        assert_eq!(open("2026-10-13T20:00:00Z"), None);
+
+        let d = db::dimensions::visible(&conn)
+            .unwrap()
+            .into_iter()
+            .find(|d| d.id == "DOM-004")
+            .unwrap();
+        assert_eq!(d.state, crate::model::dimension::DimensionState::Discovered);
+        assert!(d.applies);
+        let lead = &db::ratings::current(&conn).unwrap()
+            [&(Subject::Comparable(dana.id), "DOM-004".into())];
+        assert!(lead.provisional);
+        assert_eq!(lead.value, 7.0);
+        assert_eq!(
+            notices::bodies(&conn, notices::kind::DISCOVERY),
+            ["New dimension added: Sourdough starter age. Dana currently leads."]
+        );
+        // Nothing remains hidden: nothing further is discovered.
+        assert_eq!(open("2026-10-20T14:00:00Z"), None);
+    }
+
+    #[test]
     fn market_opens_once_a_day_and_closes_missed_days() {
         let mut conn = setup();
         db::ratings::insert(
@@ -382,7 +484,8 @@ mod tests {
             a,
             MarketActivity {
                 closed: vec![],
-                opened: true
+                opened: true,
+                discovered: None
             }
         );
         recompute(&mut conn, monday, &tz()).unwrap();

@@ -14,6 +14,7 @@ pub enum Screen {
     Comparables,
     Ratings,
     DailyFiling,
+    Notices,
     Catalog,
     Threshold,
     Reports,
@@ -27,6 +28,7 @@ impl Screen {
             Self::Comparables => copy::nav::COMPARABLES,
             Self::Ratings => copy::nav::RATINGS,
             Self::DailyFiling => copy::nav::DAILY_FILING,
+            Self::Notices => copy::nav::NOTICES,
             Self::Catalog => copy::nav::CATALOG,
             Self::Threshold => copy::nav::THRESHOLD,
             Self::Reports => copy::nav::REPORTS,
@@ -48,6 +50,10 @@ pub struct Session {
     pub reading: Option<Reading>,
     /// The revision `reading` was computed at.
     computed_revision: Option<u64>,
+    /// Notices not yet seen on the Notices screen.
+    pub unread_notices: usize,
+    /// The revision `unread_notices` was counted at.
+    unread_revision: Option<u64>,
     /// The market day last checked.
     market_day: Option<jiff::civil::Date>,
     /// Why the last market check failed, if it did.
@@ -73,6 +79,8 @@ impl Session {
             revision: 0,
             reading: None,
             computed_revision: None,
+            unread_notices: 0,
+            unread_revision: None,
             market_day: None,
             market_error: None,
             compute_error: None,
@@ -127,6 +135,10 @@ impl Session {
                 }
                 Err(e) => Some(format!("{} {e:#}", copy::engine::FAILED)),
             };
+        }
+        if self.unread_revision != Some(self.revision) {
+            self.unread_revision = Some(self.revision);
+            self.unread_notices = db::notices::unread_count(&self.conn).unwrap_or(0);
         }
         let midnight = market::start_of(today.tomorrow().expect("date in range"), &tz);
         std::time::Duration::try_from(midnight.duration_since(now))
@@ -218,6 +230,9 @@ impl eframe::App for Standing {
                     Screen::Ratings => ui::ratings::show(ui, &p, session, &mut state.ratings),
                     Screen::DailyFiling => ui::page(ui, "daily-filing", |ui| {
                         ui::daily_filing::show(ui, &p, session, &mut state.daily_filing)
+                    }),
+                    Screen::Notices => ui::page(ui, "notices", |ui| {
+                        ui::notices::show(ui, &p, session, &mut state.notices)
                     }),
                     Screen::Catalog => ui::catalog::show(ui, &p, session, &mut state.catalog),
                     Screen::Threshold => ui::page(ui, "threshold", |ui| {

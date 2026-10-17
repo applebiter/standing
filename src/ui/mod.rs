@@ -9,6 +9,7 @@ pub mod daily_filing;
 pub mod dashboard;
 pub mod form;
 pub mod nav;
+pub mod notices;
 pub mod pending;
 pub mod ratings;
 pub mod settings;
@@ -27,6 +28,7 @@ pub struct State {
     pub comparables: comparables::State,
     pub daily_filing: daily_filing::State,
     pub dashboard: dashboard::State,
+    pub notices: notices::State,
     pub ratings: ratings::State,
     pub settings: settings::State,
     pub threshold: threshold::State,

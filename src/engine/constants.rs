@@ -72,3 +72,16 @@ pub mod rebalance {
     /// Draws attempted before every estimate is placed above.
     pub const MAX_ATTEMPTS: usize = 8;
 }
+
+/// Dimension Discovery.
+pub mod discovery {
+    /// Calendar days between discoveries, counted from the last discovery
+    /// or, before the first, from the creation of the profile.
+    pub const INTERVAL_DAYS: i64 = 3;
+    /// Raw points by which the leading Comparable's provisional rating
+    /// exceeds the user's.
+    pub const LEAD_MARGIN: f64 = 1.0;
+    /// The leading Comparable's provisional rating where the user has not
+    /// rated themselves.
+    pub const UNRATED_LEAD: f64 = 7.0;
+}

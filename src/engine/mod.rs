@@ -2,6 +2,7 @@
 
 pub mod adjustment;
 pub mod constants;
+pub mod discovery;
 pub mod index;
 pub mod market;
 pub mod positions;

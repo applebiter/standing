@@ -38,6 +38,37 @@ pub fn visible(conn: &Connection) -> Result<Vec<Dimension>> {
     Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
+/// Identifiers held back for discovery, in catalog order.
+pub fn hidden_ids(conn: &Connection) -> Result<Vec<String>> {
+    let mut stmt =
+        conn.prepare("SELECT id FROM dimensions WHERE state = 'hidden' ORDER BY ordinal, id")?;
+    let rows = stmt.query_map([], |r| r.get(0))?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
+/// The number of dimensions discovered, and when the last was.
+pub fn discovered(conn: &Connection) -> Result<(u64, Option<String>)> {
+    Ok(conn.query_row(
+        "SELECT COUNT(*), MAX(discovered_at) FROM dimensions WHERE state = 'discovered'",
+        [],
+        |r| Ok((r.get::<_, i64>(0)? as u64, r.get(1)?)),
+    )?)
+}
+
+/// Reveals a hidden dimension. It applies to the user from the start.
+pub fn discover(conn: &Connection, id: &str, now: jiff::Timestamp) -> Result<Dimension> {
+    conn.execute(
+        "UPDATE dimensions SET state = 'discovered', applies = 1, discovered_at = ?2
+         WHERE id = ?1 AND state = 'hidden'",
+        params![id, super::stamp(now)],
+    )?;
+    Ok(conn.query_row(
+        &format!("SELECT {COLUMNS} FROM dimensions WHERE id = ?1"),
+        [id],
+        from_row,
+    )?)
+}
+
 /// Sets the user's "Applies to me" toggle.
 pub fn set_applies(conn: &Connection, id: &str, applies: bool) -> Result<()> {
     conn.execute(

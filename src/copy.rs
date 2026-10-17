@@ -13,6 +13,7 @@ pub mod nav {
     pub const COMPARABLES: &str = "Comparables";
     pub const RATINGS: &str = "Ratings";
     pub const DAILY_FILING: &str = "Daily Filing";
+    pub const NOTICES: &str = "Notices";
     pub const CATALOG: &str = "Dimension Catalog";
     pub const THRESHOLD: &str = "Enough Threshold";
     pub const REPORTS: &str = "Reports";
@@ -60,6 +61,13 @@ pub mod notices {
             "A new Comparable has been added to your peer set. {name} ({ticker}) was \
              identified from your extended social graph."
         )
+    }
+
+    pub fn dimension_added(dimension: &str, leader: Option<&str>) -> String {
+        match leader {
+            Some(name) => format!("New dimension added: {dimension}. {name} currently leads."),
+            None => format!("New dimension added: {dimension}."),
+        }
     }
 
     /// The daily summary posted when a market day closes.
@@ -293,6 +301,32 @@ pub mod threshold {
     }
     pub const LOAD_FAILED: &str = "The threshold could not be loaded.";
     pub const WRITE_FAILED: &str = "The threshold could not be saved.";
+}
+
+pub mod notices_screen {
+    use crate::db::notices::kind;
+
+    pub const TITLE: &str = "Notices";
+    pub const SUBTITLE: &str = "Market activity and changes to your record, newest first.";
+    pub const ALL: &str = "All notices";
+    pub const NONE: &str = "No notices.";
+    pub fn kind_label(k: &str) -> &'static str {
+        match k {
+            kind::MARKET_CLOSE => "Market close",
+            kind::THRESHOLD => "Threshold",
+            kind::REBALANCE => "Peer set",
+            kind::DISCOVERY => "Discovery",
+            _ => "Notice",
+        }
+    }
+    pub const KINDS: [&str; 4] = [
+        kind::MARKET_CLOSE,
+        kind::THRESHOLD,
+        kind::REBALANCE,
+        kind::DISCOVERY,
+    ];
+    pub const UNREAD: &str = "New";
+    pub const LOAD_FAILED: &str = "Notices could not be loaded.";
 }
 
 pub mod form {
