@@ -1,4 +1,4 @@
-//! Daily candlestick chart with an optional threshold line.
+//! Daily candlestick chart with the threshold in effect each day.
 
 use egui::{Align2, Color32, FontId, Pos2, Rect, Sense, Stroke, Ui, vec2};
 
@@ -10,12 +10,13 @@ const AXIS_WIDTH: f32 = 64.0;
 const DATE_HEIGHT: f32 = 22.0;
 const TOP_PAD: f32 = 18.0;
 
-/// Draws `candles` (one per day, oldest first) across the available width.
+/// Draws `candles` (one per day, oldest first) across the available width,
+/// with `thresholds[i]` the threshold in effect at the close of day `i`.
 pub fn candlesticks(
     ui: &mut Ui,
     p: &Palette,
     candles: &[Candle],
-    threshold: Option<f64>,
+    thresholds: &[Option<f64>],
     height: f32,
 ) {
     let (rect, response) =
@@ -30,12 +31,12 @@ pub fn candlesticks(
     let painter = ui.painter_at(rect);
     let small = FontId::new(11.0, egui::FontFamily::Monospace);
 
-    // Vertical range: every candle, and the threshold.
+    // Vertical range: every candle, and every threshold shown.
     let mut lo = candles.iter().map(|c| c.low).fold(f64::MAX, f64::min);
     let mut hi = candles.iter().map(|c| c.high).fold(f64::MIN, f64::max);
-    if let Some(t) = threshold {
-        lo = lo.min(t);
-        hi = hi.max(t);
+    for t in thresholds.iter().flatten() {
+        lo = lo.min(*t);
+        hi = hi.max(*t);
     }
     if hi - lo < 1.0 {
         let mid = (hi + lo) / 2.0;
@@ -82,18 +83,47 @@ pub fn candlesticks(
         painter.rect_filled(body_rect, 1.0, color);
     }
 
-    // The threshold.
-    if let Some(t) = threshold {
-        let y = y_of(t);
+    // The threshold, as a step line: level across each day, rising or falling
+    // between days where it changed.
+    let stroke = Stroke::new(1.5, p.accent);
+    let mut previous: Option<f32> = None;
+    for (i, t) in thresholds.iter().enumerate().take(candles.len()) {
+        let Some(t) = t else {
+            previous = None;
+            continue;
+        };
+        let y = y_of(*t);
+        let x0 = if i == 0 {
+            plot.left()
+        } else {
+            plot.left() + slot * i as f32
+        };
+        let x1 = if i + 1 == candles.len() {
+            plot.right()
+        } else {
+            plot.left() + slot * (i + 1) as f32
+        };
+        if let Some(py) = previous.filter(|py| (py - y).abs() > 0.5) {
+            painter.extend(egui::Shape::dashed_line(
+                &[Pos2::new(x0, py), Pos2::new(x0, y)],
+                stroke,
+                3.0,
+                3.0,
+            ));
+        }
         painter.extend(egui::Shape::dashed_line(
-            &[Pos2::new(plot.left(), y), Pos2::new(plot.right(), y)],
-            Stroke::new(1.5, p.accent),
+            &[Pos2::new(x0, y), Pos2::new(x1, y)],
+            stroke,
             6.0,
             4.0,
         ));
+        previous = Some(y);
+    }
+    if let Some(Some(t)) = thresholds.get(candles.len() - 1) {
+        let y = y_of(*t);
         painter.text(
-            Pos2::new(plot.left() + 4.0, y - 4.0),
-            Align2::LEFT_BOTTOM,
+            Pos2::new(plot.right() - 4.0, y - 4.0),
+            Align2::RIGHT_BOTTOM,
             copy::dashboard::THRESHOLD_LINE,
             FontId::new(11.0, theme::family::sans_medium()),
             p.accent,
@@ -101,7 +131,7 @@ pub fn candlesticks(
         painter.text(
             Pos2::new(plot.right() + 10.0, y),
             Align2::LEFT_CENTER,
-            format::index(t),
+            format::index(*t),
             FontId::new(11.0, theme::family::mono_medium()),
             p.accent,
         );

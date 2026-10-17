@@ -31,11 +31,13 @@ pub enum Outcome {
     DeleteRequested,
 }
 
-impl FormState {
-    pub fn new() -> Self {
+impl Default for FormState {
+    fn default() -> Self {
         Self::with(None, ComparableDraft::default())
     }
+}
 
+impl FormState {
     pub fn edit(comparable: Comparable) -> Self {
         let draft = ComparableDraft::from_comparable(&comparable);
         Self::with(Some(comparable), draft)

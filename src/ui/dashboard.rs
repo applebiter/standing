@@ -60,6 +60,8 @@ struct Loaded {
     range: Range,
     today: jiff::civil::Date,
     candles: Vec<Candle>,
+    /// The threshold in effect at the close of each candle's day.
+    thresholds: Vec<Option<f64>>,
     threshold: Option<f64>,
     /// The value each change is measured from: the previous close, or failing
     /// that today's first value.
@@ -147,7 +149,7 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
             ui.label(RichText::new(copy::dashboard::NO_HISTORY).color(p.text_secondary));
             ui.add_space(space::LG);
         } else {
-            chart::candlesticks(ui, p, &loaded.candles, loaded.threshold, CHART_HEIGHT);
+            chart::candlesticks(ui, p, &loaded.candles, &loaded.thresholds, CHART_HEIGHT);
         }
     });
     ui.add_space(space::MD);
@@ -199,6 +201,24 @@ fn load(
         }
     };
 
+    // Oldest first: (when, new value).
+    let mut history: Vec<(Timestamp, f64)> = db::threshold::history(conn)?
+        .into_iter()
+        .filter_map(|e| Some((e.changed_at.parse().ok()?, e.new)))
+        .collect();
+    history.reverse();
+    let thresholds = candles
+        .iter()
+        .map(|c| {
+            let close = market::start_of(c.day.tomorrow().expect("date in range"), tz);
+            history
+                .iter()
+                .rev()
+                .find(|(t, _)| *t < close)
+                .map(|(_, v)| *v)
+        })
+        .collect();
+
     let comparables = db::comparables::active(conn)?;
     let start_today = market::start_of(today, tz);
     let end_today = market::start_of(tomorrow, tz);
@@ -228,6 +248,7 @@ fn load(
         range,
         today,
         candles,
+        thresholds,
         threshold: db::threshold::current(conn)?,
         reference,
         own_reference_is_close,

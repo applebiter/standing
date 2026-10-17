@@ -65,7 +65,7 @@ fn list(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) {
         });
         ui.with_layout(Layout::right_to_left(Align::Min), |ui| {
             if super::primary_button(ui, p, copy::comparables::ADD).clicked() {
-                state.form = Some(FormState::new());
+                state.form = Some(FormState::default());
             }
         });
     });

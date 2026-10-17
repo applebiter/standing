@@ -1,14 +1,4 @@
-mod app;
-mod catalog;
-mod copy;
-mod db;
-mod engine;
-mod format;
-mod model;
-mod report;
-mod settings;
-mod theme;
-mod ui;
+use standing::{app, copy};
 
 fn main() -> eframe::Result {
     let options = eframe::NativeOptions {
