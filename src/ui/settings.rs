@@ -82,6 +82,25 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
         );
     });
 
+    ui.add_space(space::MD);
+    theme::card(p).show(ui, |ui| {
+        ui.set_width(ui.available_width().min(CARD_WIDTH));
+        super::overline(ui, p, copy::settings::ABOUT);
+        ui.add_space(space::SM);
+        ui.label(
+            RichText::new(copy::settings::version(env!("CARGO_PKG_VERSION")))
+                .family(theme::family::serif())
+                .size(18.0),
+        );
+        ui.label(RichText::new(copy::settings::ATTRIBUTION).color(p.text_secondary));
+        ui.add_space(space::XS);
+        ui.label(
+            RichText::new(copy::settings::TYPEFACES)
+                .small()
+                .color(p.text_secondary),
+        );
+    });
+
     if let Some(err) = &state.save_error {
         ui.add_space(space::MD);
         ui.label(RichText::new(err).color(p.danger));

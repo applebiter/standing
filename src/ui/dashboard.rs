@@ -154,7 +154,7 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
     });
     ui.add_space(space::MD);
 
-    if width >= 900.0 {
+    if width >= 760.0 {
         ui.horizontal_top(|ui| {
             ui.spacing_mut().item_spacing.x = space::MD;
             let half = (width - space::MD) / 2.0;

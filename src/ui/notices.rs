@@ -129,7 +129,7 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
                     }
                 });
                 ui.vertical(|ui| {
-                    ui.set_width(96.0);
+                    ui.set_width(116.0);
                     ui.label(super::overline_text(
                         p,
                         copy::notices_screen::kind_label(&n.kind),

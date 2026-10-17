@@ -84,13 +84,19 @@ pub mod notices {
             Some(_) => ", unchanged".to_owned(),
             None => String::new(),
         };
+        let range = if format::index(candle.low) == format::index(candle.high) {
+            String::new()
+        } else {
+            format!(
+                " Session range {} to {}.",
+                format::index(candle.low),
+                format::index(candle.high)
+            )
+        };
         format!(
-            "Market close, {}. The Personal Standing Index closed at {}{movement}. \
-             Session range {} to {}.",
+            "Market close, {}. The Personal Standing Index closed at {}{movement}.{range}",
             format::date_long(day),
             format::index(candle.close),
-            format::index(candle.low),
-            format::index(candle.high),
         )
     }
 }
@@ -610,6 +616,12 @@ pub mod settings {
     pub const STORAGE_SYSTEM: &str =
         "Standard. The profile is kept in this computer\u{2019}s application-data folder.";
     pub const SAVE_FAILED: &str = "Settings could not be saved.";
+    pub const ABOUT: &str = "About";
+    pub fn version(v: &str) -> String {
+        format!("Standing {v}")
+    }
+    pub const ATTRIBUTION: &str = "An Applebiter application.";
+    pub const TYPEFACES: &str = "Typeset in IBM Plex, under the SIL Open Font License 1.1.";
 }
 
 pub mod startup {
@@ -621,6 +633,22 @@ pub mod startup {
 #[cfg(test)]
 mod tests {
     use crate::engine::market::Candle;
+
+    #[test]
+    fn a_flat_session_omits_its_range() {
+        let day = jiff::civil::date(2026, 10, 16);
+        let flat = Candle {
+            day,
+            open: 85.28,
+            high: 85.28,
+            low: 85.28,
+            close: 85.28,
+        };
+        assert_eq!(
+            super::notices::market_close(day, &flat, None),
+            "Market close, 16 October 2026. The Personal Standing Index closed at 85.28."
+        );
+    }
 
     #[test]
     fn market_close_summaries() {

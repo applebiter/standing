@@ -141,7 +141,7 @@ fn page(ui: &mut Ui, p: &Palette, call: &EarningsCall) {
         .stroke(egui::Stroke::new(1.0, p.border))
         .inner_margin(egui::Margin::symmetric(48, 40))
         .show(ui, |ui| {
-            ui.set_width(width - 96.0);
+            ui.set_width(width - 98.0);
             super::overline(ui, p, copy::reports::TRANSCRIPT);
             ui.add_space(space::XS);
             ui.label(
