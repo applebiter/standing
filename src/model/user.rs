@@ -11,6 +11,10 @@ pub struct UserProfile {
     pub rng_seed: i64,
     pub created_at: String,
     pub onboarding_complete: bool,
+    /// The onboarding step to resume at, from 0.
+    pub onboarding_step: u32,
+    /// Dimensions passed in the Dimension Review.
+    pub review_position: u32,
 }
 
 /// Editable profile fields, as typed.

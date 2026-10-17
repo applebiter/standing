@@ -9,7 +9,10 @@ CREATE TABLE profile (
   field               TEXT,
   rng_seed            INTEGER NOT NULL,
   created_at          TEXT NOT NULL,
-  onboarding_complete INTEGER NOT NULL DEFAULT 0
+  onboarding_complete INTEGER NOT NULL DEFAULT 0,
+  -- Where an incomplete onboarding resumes.
+  onboarding_step     INTEGER NOT NULL DEFAULT 0,
+  review_position     INTEGER NOT NULL DEFAULT 0
 );
 
 -- Seeded from the SCCD catalog. Rows are inserted for new identifiers only;

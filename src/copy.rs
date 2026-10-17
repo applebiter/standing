@@ -333,6 +333,63 @@ pub mod notices_screen {
     pub const LOAD_FAILED: &str = "Notices could not be loaded.";
 }
 
+pub mod onboarding {
+    pub fn step_of(step: u32, steps: u32) -> String {
+        format!("Step {step} of {steps}")
+    }
+    pub const CONTINUE: &str = "Continue";
+    pub const BACK: &str = "Back";
+
+    pub const PROFILE_TITLE: &str = "Profile";
+    pub const PROFILE_SUBTITLE: &str =
+        "Your details are kept on this computer and used to prepare your record.";
+    pub const NAME_HELP: &str = "As you would like it to appear in reports.";
+    pub const FIELD_HINT: &str = "e.g. accounting, nursing, software";
+
+    pub const REVIEW_TITLE: &str = "Dimension Review";
+    pub const REVIEW_SUBTITLE: &str = "Confirm which comparison dimensions apply to you.";
+    pub const APPLIES: &str = "Applies to me";
+    pub fn reviewed(n: u32, total: u32) -> String {
+        format!(
+            "Dimensions reviewed: {} of {}",
+            crate::format::thousands(n),
+            crate::format::thousands(total)
+        )
+    }
+    pub const NEXT: &str = "Next";
+    pub const PREVIOUS: &str = "Previous";
+    pub const KEYS: &str =
+        "Right arrow or Enter: next. Left arrow: previous. Space: applies to me.";
+    pub const SKIP_REMAINING: &str = "Skip remaining (all will apply)";
+
+    pub const COMPARABLES_TITLE: &str = "Comparables";
+    pub const COMPARABLES_SUBTITLE: &str =
+        "Add the people you compare yourself to. At least one is required.";
+    pub const ADD_COMPARABLE: &str = "Add to peer set";
+    pub fn peer_set(n: usize) -> String {
+        match n {
+            0 => "Peer set".to_owned(),
+            1 => "Peer set: 1 Comparable".to_owned(),
+            n => format!("Peer set: {n} Comparables"),
+        }
+    }
+    pub const NONE_YET: &str = "No Comparables added.";
+    pub const NEED_ONE: &str = "Add at least one Comparable to continue.";
+    pub const REMOVE: &str = "Remove";
+
+    pub const THRESHOLD_TITLE: &str = "Enough Threshold";
+    pub const THRESHOLD_SUBTITLE: &str =
+        "Enter the Personal Standing Index value at which you will feel secure.";
+    pub fn psi_now(psi: &str) -> String {
+        format!("Your Personal Standing Index currently stands at {psi}.")
+    }
+    pub const THRESHOLD_FIELD: &str = "Enough Threshold";
+    pub const FINISH: &str = "Open the market";
+
+    pub const LOAD_FAILED: &str = "Onboarding could not be loaded.";
+    pub const SAVE_FAILED: &str = "Your progress could not be saved.";
+}
+
 pub mod form {
     use crate::model::FieldError;
 

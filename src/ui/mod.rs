@@ -10,6 +10,7 @@ pub mod dashboard;
 pub mod form;
 pub mod nav;
 pub mod notices;
+pub mod onboarding;
 pub mod pending;
 pub mod ratings;
 pub mod settings;
@@ -29,6 +30,7 @@ pub struct State {
     pub daily_filing: daily_filing::State,
     pub dashboard: dashboard::State,
     pub notices: notices::State,
+    pub onboarding: onboarding::State,
     pub ratings: ratings::State,
     pub settings: settings::State,
     pub threshold: threshold::State,

@@ -190,6 +190,24 @@ impl eframe::App for Standing {
         let until_midnight = session.maintain();
         ui.ctx().request_repaint_after(until_midnight);
 
+        if !session.user.onboarding_complete {
+            egui::CentralPanel::default()
+                .frame(
+                    egui::Frame::new()
+                        .fill(p.background)
+                        .inner_margin(egui::Margin::same(theme::space::XL as i8)),
+                )
+                .show(ui, |ui| {
+                    ui::page(ui, "onboarding", |ui| {
+                        ui::onboarding::show(ui, &p, session, &mut self.ui_state.onboarding)
+                    })
+                });
+            if session.user.onboarding_complete {
+                self.screen = Screen::Dashboard;
+            }
+            return;
+        }
+
         egui::Panel::left("nav")
             .resizable(false)
             .exact_size(theme::SIDEBAR_WIDTH)

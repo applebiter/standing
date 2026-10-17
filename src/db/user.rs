@@ -9,7 +9,8 @@ use crate::model::user::UserProfile;
 pub fn get(conn: &Connection) -> Result<Option<UserProfile>> {
     Ok(conn
         .query_row(
-            "SELECT display_name, field, rng_seed, created_at, onboarding_complete
+            "SELECT display_name, field, rng_seed, created_at, onboarding_complete,
+                    onboarding_step, review_position
              FROM profile WHERE id = 1",
             [],
             |r| {
@@ -19,6 +20,8 @@ pub fn get(conn: &Connection) -> Result<Option<UserProfile>> {
                     rng_seed: r.get(2)?,
                     created_at: r.get(3)?,
                     onboarding_complete: r.get(4)?,
+                    onboarding_step: r.get(5)?,
+                    review_position: r.get(6)?,
                 })
             },
         )
@@ -44,6 +47,23 @@ pub fn update(conn: &Connection, display_name: &str, field: Option<&str>) -> Res
     Ok(())
 }
 
+/// Records where onboarding stands, so that it can be resumed.
+pub fn set_onboarding_progress(conn: &Connection, step: u32, review_position: u32) -> Result<()> {
+    conn.execute(
+        "UPDATE profile SET onboarding_step = ?1, review_position = ?2 WHERE id = 1",
+        params![step, review_position],
+    )?;
+    Ok(())
+}
+
+pub fn complete_onboarding(conn: &Connection) -> Result<()> {
+    conn.execute(
+        "UPDATE profile SET onboarding_complete = 1 WHERE id = 1",
+        [],
+    )?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -64,5 +84,17 @@ mod tests {
         assert_eq!(again.rng_seed, 42);
         assert_eq!(again.display_name, "Alex");
         assert_eq!(again.field.as_deref(), Some("Accounting"));
+    }
+
+    #[test]
+    fn onboarding_progress_resumes() {
+        let conn = db::open_in_memory().unwrap();
+        ensure(&conn, 1, "2026-10-16T09:00:00Z".parse().unwrap()).unwrap();
+        set_onboarding_progress(&conn, 1, 37).unwrap();
+        let p = get(&conn).unwrap().unwrap();
+        assert_eq!((p.onboarding_step, p.review_position), (1, 37));
+        assert!(!p.onboarding_complete);
+        complete_onboarding(&conn).unwrap();
+        assert!(get(&conn).unwrap().unwrap().onboarding_complete);
     }
 }
