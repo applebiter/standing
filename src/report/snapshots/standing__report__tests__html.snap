@@ -74,7 +74,7 @@ expression: "html.split(\"</style>\").nth(1).unwrap()"
 </div>
 <div class="turn executive">
 <p class="speaker">Alex, Chief Executive</p>
-<p>We don&#x27;t break that out.</p>
+<p>We&#x27;re very comfortable with where we are.</p>
 </div>
 <div class="turn operator">
 <p class="speaker">Operator</p>
@@ -86,7 +86,7 @@ expression: "html.split(\"</style>\").nth(1).unwrap()"
 </div>
 <div class="turn executive">
 <p class="speaker">Alex, Chief Executive</p>
-<p>We&#x27;ll have more to say about that next quarter.</p>
+<p>We don&#x27;t comment on individual Comparables.</p>
 </div>
 <div class="turn operator">
 <p class="speaker">Operator</p>
@@ -98,7 +98,7 @@ expression: "html.split(\"</style>\").nth(1).unwrap()"
 </div>
 <div class="turn executive">
 <p class="speaker">Alex, Chief Executive</p>
-<p>I&#x27;d caution against reading too much into a single quarter.</p>
+<p>We don&#x27;t break that out.</p>
 </div>
 <div class="turn operator">
 <p class="speaker">Operator</p>
@@ -110,7 +110,7 @@ expression: "html.split(\"</style>\").nth(1).unwrap()"
 </div>
 <div class="turn executive">
 <p class="speaker">Alex, Chief Executive</p>
-<p>That&#x27;s something we&#x27;re looking at very closely.</p>
+<p>We&#x27;ll have more to say about that next quarter.</p>
 </div>
 <div class="turn operator">
 <p class="speaker">Operator</p>

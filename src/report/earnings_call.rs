@@ -224,10 +224,12 @@ pub fn prepare(d: &QuarterData) -> EarningsCall {
     match d.psi {
         Some(r) => {
             let change = r.close - r.open;
-            let bank = if change > 0.0 {
+            let bank = if change >= 0.005 {
                 &ph::PERFORMANCE_UP[..]
-            } else {
+            } else if change <= -0.005 {
                 &ph::PERFORMANCE_DOWN[..]
+            } else {
+                &ph::PERFORMANCE_FLAT[..]
             };
             remarks.push(fill(
                 pick(bank, n, 2),
@@ -327,51 +329,62 @@ pub fn prepare(d: &QuarterData) -> EarningsCall {
     ];
 
     // Questions and answers.
-    let mut questions: Vec<String> = Vec::new();
+    // Each question, and whether it concerns a particular Comparable.
+    let mut questions: Vec<(String, bool)> = Vec::new();
     for (i, h) in d.headwinds.iter().take(2).enumerate() {
-        questions.push(fill(
-            pick(&ph::Q_HEADWIND, n, 20 + i as u64),
-            &[
-                ("dimension", &h.dimension.to_lowercase()),
-                ("leader", &ph::in_sentence(&h.leader)),
-                ("Leader", &ph::opening(&h.leader)),
-            ],
+        questions.push((
+            fill(
+                pick(&ph::Q_HEADWIND, n, 20 + i as u64),
+                &[
+                    ("dimension", &h.dimension.to_lowercase()),
+                    ("leader", &ph::in_sentence(&h.leader)),
+                    ("Leader", &ph::opening(&h.leader)),
+                ],
+            ),
+            false,
         ));
     }
     if let Some(t) = d.threshold_at_end {
         let close = d.psi.map_or(t, |r| r.close);
-        questions.push(fill(
-            pick(&ph::Q_THRESHOLD, n, 22),
-            &[
-                ("to", &format::index(t)),
-                ("shortfall", &format::index((t - close).max(0.0))),
-            ],
+        questions.push((
+            fill(
+                pick(&ph::Q_THRESHOLD, n, 22),
+                &[
+                    ("to", &format::index(t)),
+                    ("shortfall", &format::index((t - close).max(0.0))),
+                ],
+            ),
+            false,
         ));
     }
     if let Some((p, change)) = gainers.first() {
-        questions.push(fill(
-            pick(&ph::Q_PEER, n, 23),
-            &[
-                ("name", &ph::in_sentence(&p.name)),
-                ("Name", &ph::opening(&p.name)),
-                ("change", &format::index(*change)),
-            ],
+        questions.push((
+            fill(
+                pick(&ph::Q_PEER, n, 23),
+                &[
+                    ("name", &ph::in_sentence(&p.name)),
+                    ("Name", &ph::opening(&p.name)),
+                    ("change", &format::index(*change)),
+                ],
+            ),
+            true,
         ));
     }
     let positions = match d.positions_held {
+        0 => "no positions".to_owned(),
         1 => "one position".to_owned(),
         k => format!("{k} positions"),
     };
-    questions.push(fill(
-        pick(&ph::Q_POSITIONS, n, 24),
-        &[("count", &positions)],
+    questions.push((
+        fill(pick(&ph::Q_POSITIONS, n, 24), &[("count", &positions)]),
+        false,
     ));
-    questions.push(pick(&ph::Q_SPOTLIGHT, n, 25).to_owned());
+    questions.push((pick(&ph::Q_SPOTLIGHT, n, 25).to_owned(), false));
 
     let mut qa = Vec::new();
     let firm_start = (n % ph::FIRMS.len() as u64) as usize;
     let evasion_start = (n.wrapping_mul(31) % ph::EVASIONS.len() as u64) as usize;
-    for (i, question) in questions.into_iter().enumerate() {
+    for (i, (question, about_peer)) in questions.into_iter().enumerate() {
         let firm = ph::FIRMS[(firm_start + i) % ph::FIRMS.len()];
         qa.push(Turn {
             speaker: OPERATOR.to_owned(),
@@ -393,7 +406,14 @@ pub fn prepare(d: &QuarterData) -> EarningsCall {
         qa.push(Turn {
             speaker: exec.clone(),
             role: Role::Executive,
-            paragraphs: vec![ph::EVASIONS[(evasion_start + i * 5) % ph::EVASIONS.len()].to_owned()],
+            paragraphs: vec![
+                if about_peer {
+                    pick(&ph::PEER_EVASIONS, n, 50)
+                } else {
+                    ph::EVASIONS[(evasion_start + i * 5) % ph::EVASIONS.len()]
+                }
+                .to_owned(),
+            ],
         });
     }
     qa.push(Turn {
@@ -631,6 +651,39 @@ pub mod tests {
             .collect();
         assert!(operator_lines[0].starts_with("Our first question"));
         assert!(operator_lines[1..].iter().all(|l| !l.contains("first")));
+    }
+
+    #[test]
+    fn a_flat_empty_quarter_reads_plainly() {
+        let d = QuarterData {
+            psi: Some(Range {
+                open: 100.0,
+                high: 100.0,
+                low: 100.0,
+                close: 100.0,
+            }),
+            threshold_at_end: Some(200.0),
+            adjustments: vec![],
+            headwinds: vec![],
+            peers: vec![],
+            introduced: vec![],
+            discovered: vec![],
+            positions_held: 0,
+            ..sample()
+        };
+        for seed in 0..20 {
+            let call = prepare(&QuarterData { seed, ..d.clone() });
+            let text: String = call
+                .sections
+                .iter()
+                .flat_map(|s| &s.turns)
+                .flat_map(|t| t.paragraphs.clone())
+                .collect::<Vec<_>>()
+                .join("\n");
+            assert!(text.contains("unchanged"), "{text}");
+            assert!(!text.contains("0 positions"));
+            assert!(!text.contains("individual Comparables"));
+        }
     }
 
     #[test]

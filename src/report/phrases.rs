@@ -68,7 +68,15 @@ pub const PERFORMANCE_UP: [&str; 3] = [
      underlying strength of the franchise.",
 ];
 
-/// The quarter's performance when the index fell or was flat.
+/// The quarter's performance when the index was unchanged. Placeholders:
+/// {close}.
+pub const PERFORMANCE_FLAT: [&str; 2] = [
+    "The Personal Standing Index closed the quarter unchanged at {close}. We view that stability \
+     as a strength.",
+    "The index was unchanged over the quarter at {close}. We continue to execute against our plan.",
+];
+
+/// The quarter's performance when the index fell.
 pub const PERFORMANCE_DOWN: [&str; 3] = [
     "The Personal Standing Index opened the quarter at {open} and closed at {close}, a change of \
      {change} points, or {pct}. This was a challenging quarter, and the result reflects \
@@ -199,7 +207,7 @@ pub const Q_PEER: [&str; 2] = [
 /// Placeholders: {count}.
 pub const Q_POSITIONS: [&str; 2] = [
     "You currently hold {count}. Can you talk about your strategy there?",
-    "Positions held stand at {count}. Do you expect that to change?",
+    "You hold {count} at present. Do you expect that to change?",
 ];
 
 pub const Q_SPOTLIGHT: [&str; 2] = [
@@ -207,7 +215,7 @@ pub const Q_SPOTLIGHT: [&str; 2] = [
     "Can you comment on the Spotlight readings this quarter?",
 ];
 
-pub const EVASIONS: [&str; 12] = [
+pub const EVASIONS: [&str; 11] = [
     "We don't break that out.",
     "We're very comfortable with where we are.",
     "I'd point you to the long-term trend.",
@@ -219,7 +227,13 @@ pub const EVASIONS: [&str; 12] = [
     "I think the market has yet to fully appreciate our position there.",
     "That's a fair question, and I'd answer it this way: we remain focused on execution.",
     "I'd caution against reading too much into a single quarter.",
+];
+
+/// Answers to questions about a particular Comparable.
+pub const PEER_EVASIONS: [&str; 3] = [
     "We don't comment on individual Comparables.",
+    "We wish them well. Their results are their own.",
+    "I'd note that one quarter does not make a trend.",
 ];
 
 pub const OPERATOR_CLOSING: [&str; 2] = [
