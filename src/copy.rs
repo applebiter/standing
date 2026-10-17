@@ -70,6 +70,8 @@ pub mod notices {
         }
     }
 
+    pub const WEIGHTS_RECALIBRATED: &str = "Weights recalibrated to reflect observed priorities.";
+
     /// The daily summary posted when a market day closes.
     pub fn market_close(day: jiff::civil::Date, candle: &Candle, previous: Option<f64>) -> String {
         let movement = match previous {
@@ -316,14 +318,16 @@ pub mod notices_screen {
             kind::THRESHOLD => "Threshold",
             kind::REBALANCE => "Peer set",
             kind::DISCOVERY => "Discovery",
+            kind::RECALIBRATION => "Weights",
             _ => "Notice",
         }
     }
-    pub const KINDS: [&str; 4] = [
+    pub const KINDS: [&str; 5] = [
         kind::MARKET_CLOSE,
         kind::THRESHOLD,
         kind::REBALANCE,
         kind::DISCOVERY,
+        kind::RECALIBRATION,
     ];
     pub const UNREAD: &str = "New";
     pub const LOAD_FAILED: &str = "Notices could not be loaded.";
@@ -476,6 +480,9 @@ pub mod catalog {
     pub const ACTIVE_DIMENSIONS: &str = "Active dimensions";
     pub const SECTORS: &str = "Sectors";
     pub const INDUSTRIES: &str = "Industries";
+    pub const LAST_RECALIBRATED: &str = "Last recalibrated";
+    pub const WEIGHT_HINT: &str = "Relative importance in the index. Drag or type to set. \
+                                   Weights are recalibrated at each market close.";
 
     pub const SEARCH_HINT: &str = "Search name, definition, industry or ID";
     pub const ALL_SECTORS: &str = "All sectors";

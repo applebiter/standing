@@ -10,3 +10,4 @@ pub mod rebalance;
 pub mod run;
 pub mod spotlight;
 pub mod threshold;
+pub mod weights;

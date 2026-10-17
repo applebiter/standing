@@ -8,15 +8,17 @@ use jiff::civil::Date;
 use jiff::tz::TimeZone;
 use rusqlite::Connection;
 
+use super::constants::weights::DRIFT_PER_RATING;
 use super::discovery;
 use super::index::{self, ComparableRatings, Inputs, Reading, WeightedDimension};
 use super::market;
 use super::rebalance;
 use super::threshold::{self, Adjustment};
+use super::weights;
 use crate::copy;
 use crate::db::{self, notices};
 use crate::model::comparable::{Comparable, Origin};
-use crate::model::rating::Subject;
+use crate::model::rating::{Rating, Subject};
 
 /// Gathers the current record into the index's inputs.
 pub fn inputs(conn: &Connection) -> db::Result<Inputs> {
@@ -57,6 +59,55 @@ pub fn inputs(conn: &Connection) -> db::Result<Inputs> {
         comparables,
         events: db::events::all(conn)?,
     })
+}
+
+/// Records a rating entered by the user. The dimension's weight drifts upward.
+pub fn record_rating(
+    conn: &mut Connection,
+    subject: Subject,
+    dimension_id: &str,
+    value: f64,
+    now: Timestamp,
+) -> db::Result<Rating> {
+    let tx = conn.transaction()?;
+    let rating = db::ratings::insert(&tx, subject, dimension_id, value, now)?;
+    db::weights::add(&tx, dimension_id, DRIFT_PER_RATING)?;
+    tx.commit()?;
+    Ok(rating)
+}
+
+/// Rescales applicable weights to a mean of 1.0. If any has moved by more
+/// than the threshold since the last recalibration, the new weights become
+/// the baseline and a notice is posted.
+fn recalibrate(conn: &Connection, now: Timestamp) -> db::Result<bool> {
+    let mut current = db::weights::applicable(conn)?;
+    weights::normalize(&mut current);
+    let tx = conn.unchecked_transaction()?;
+    for (id, w) in &current {
+        db::weights::set(&tx, id, *w)?;
+    }
+    let baseline = db::weights::last(&tx)?
+        .map(|(_, r)| r.weights)
+        .unwrap_or_default();
+    let revised = weights::revisions(&baseline, &current);
+    if !revised.is_empty() {
+        db::weights::log(
+            &tx,
+            &db::weights::Recalibration {
+                weights: current.into_iter().collect(),
+                revised: revised.iter().map(Into::into).collect(),
+            },
+            now,
+        )?;
+        notices::insert(
+            &tx,
+            notices::kind::RECALIBRATION,
+            copy::notices::WEIGHTS_RECALIBRATED,
+            now,
+        )?;
+    }
+    tx.commit()?;
+    Ok(!revised.is_empty())
 }
 
 /// The result of a recomputation.
@@ -254,6 +305,7 @@ fn close(conn: &Connection, day: Date, now: Timestamp, tz: &TimeZone) -> db::Res
         let body = copy::notices::market_close(day, candle, previous);
         notices::insert(conn, notices::kind::MARKET_CLOSE, &body, now)?;
     }
+    recalibrate(conn, now)?;
     db::market::mark_closed(conn, day, now)
 }
 
@@ -463,6 +515,52 @@ mod tests {
         );
         // Nothing remains hidden: nothing further is discovered.
         assert_eq!(open("2026-10-20T14:00:00Z"), None);
+    }
+
+    #[test]
+    fn dwelling_on_a_dimension_recalibrates_weights_at_the_close() {
+        let mut conn = setup();
+        let t = at("2026-10-14T13:00:00Z");
+        market_check(&conn, t, &tz()).unwrap();
+        // Rating once drifts by 0.02: with two applicable dimensions the
+        // close normalizes it below the threshold.
+        record_rating(&mut conn, Subject::Own, "MAT-014", 5.0, t).unwrap();
+        market_check(&conn, at("2026-10-15T13:00:00Z"), &tz()).unwrap();
+        assert!(notices::bodies(&conn, notices::kind::RECALIBRATION).is_empty());
+        let w = db::weights::applicable(&conn).unwrap();
+        assert_eq!(w.len(), 1, "the hidden dimension does not count");
+        assert!((w[0].1 - 1.0).abs() < 1e-12, "mean of one weight is 1.0");
+
+        // Add a second applicable dimension, then dwell on the first.
+        db::dimensions::discover(&conn, "DOM-004", t).unwrap();
+        for v in [5.5, 6.0, 6.5, 7.0, 7.5, 8.0] {
+            record_rating(&mut conn, Subject::Own, "MAT-014", v, t).unwrap();
+        }
+        market_check(&conn, at("2026-10-16T13:00:00Z"), &tz()).unwrap();
+        assert_eq!(
+            notices::bodies(&conn, notices::kind::RECALIBRATION),
+            [copy::notices::WEIGHTS_RECALIBRATED]
+        );
+        let w: HashMap<String, f64> = db::weights::applicable(&conn)
+            .unwrap()
+            .into_iter()
+            .collect();
+        // 1.12 and 1.00, rescaled to a mean of 1.0.
+        assert!((w["MAT-014"] - 1.12 / 1.06).abs() < 1e-9);
+        assert!((w["DOM-004"] - 1.0 / 1.06).abs() < 1e-9);
+        // Both moved by more than 5%: one up, and the other down by rescaling.
+        let (_, last) = db::weights::last(&conn).unwrap().unwrap();
+        let mut revised: Vec<&str> = last.revised.iter().map(|r| r.id.as_str()).collect();
+        revised.sort();
+        assert_eq!(revised, ["DOM-004", "MAT-014"]);
+
+        // The next close finds nothing new to report.
+        market_check(&conn, at("2026-10-17T13:00:00Z"), &tz()).unwrap();
+        market_check(&conn, at("2026-10-18T13:00:00Z"), &tz()).unwrap();
+        assert_eq!(
+            notices::bodies(&conn, notices::kind::RECALIBRATION).len(),
+            1
+        );
     }
 
     #[test]

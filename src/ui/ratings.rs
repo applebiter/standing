@@ -10,6 +10,7 @@ use jiff::Timestamp;
 
 use crate::app::Session;
 use crate::db;
+use crate::engine::run;
 use crate::model::comparable::{Comparable, SELF_TICKER};
 use crate::model::dimension::Dimension;
 use crate::model::rating::{self, Rating, Subject};
@@ -136,8 +137,13 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
                 let committed = dimension_card(ui, p, loaded, i, &mut state.drafts);
                 for (subject, value) in committed {
                     let id = loaded.dimensions[i].id.clone();
-                    match db::ratings::insert(&session.conn, subject, &id, value, Timestamp::now())
-                    {
+                    match run::record_rating(
+                        &mut session.conn,
+                        subject,
+                        &id,
+                        value,
+                        Timestamp::now(),
+                    ) {
                         Ok(r) => {
                             loaded.current.insert((subject, id), r);
                             session.revision += 1;

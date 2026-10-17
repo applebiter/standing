@@ -12,6 +12,7 @@ pub mod kind {
     pub const THRESHOLD: &str = "threshold";
     pub const REBALANCE: &str = "rebalance";
     pub const DISCOVERY: &str = "discovery";
+    pub const RECALIBRATION: &str = "recalibration";
 }
 
 pub fn insert(conn: &Connection, kind: &str, body: &str, now: Timestamp) -> Result<()> {

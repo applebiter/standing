@@ -10,6 +10,7 @@ pub mod schema;
 pub mod snapshots;
 pub mod threshold;
 pub mod user;
+pub mod weights;
 
 use std::path::{Path, PathBuf};
 

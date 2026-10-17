@@ -1,12 +1,13 @@
 //! The Dimension Catalog: browse, search and apply SCCD dimensions.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 
 use egui::{Align, Layout, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
 
 use crate::app::Session;
-use crate::db::dimensions;
+use crate::db::{self, dimensions};
+use crate::engine::constants::weights::{MAXIMUM as WEIGHT_MAX, MINIMUM as WEIGHT_MIN};
 use crate::model::dimension::{Dimension, DimensionState};
 use crate::theme::{self, Palette, space};
 use crate::{copy, format};
@@ -78,6 +79,9 @@ pub struct State {
     dimensions: Option<Vec<Dimension>>,
     /// The session revision `dimensions` was loaded at.
     revision: u64,
+    last_recalibrated: Option<String>,
+    /// Weights being dragged, not yet saved.
+    weight_drafts: HashMap<String, f64>,
     filters: Filters,
     error: Option<String>,
 }
@@ -90,6 +94,10 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
             Ok(d) => {
                 state.dimensions = Some(d);
                 state.revision = session.revision;
+                state.last_recalibrated = db::weights::last(&session.conn)
+                    .ok()
+                    .flatten()
+                    .map(|(at, _)| at);
             }
             Err(e) => state.error = Some(format!("{} {e:#}", copy::catalog::LOAD_FAILED)),
         }
@@ -102,7 +110,7 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
         return;
     };
 
-    summary(ui, p, dims);
+    summary(ui, p, dims, state.last_recalibrated.as_deref());
     ui.add_space(space::LG);
 
     let sectors: Vec<String> = dims
@@ -129,22 +137,34 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
         return;
     }
 
-    if let Some((id, applies)) = table(ui, p, dims, &shown) {
-        match dimensions::set_applies(&session.conn, &id, applies) {
-            Ok(()) => {
-                if let Some(d) = dims.iter_mut().find(|d| d.id == id) {
-                    d.applies = applies;
+    let edit = table(ui, p, dims, &shown, &mut state.weight_drafts);
+    let result = match &edit {
+        Some(Edit::Applies(id, applies)) => dimensions::set_applies(&session.conn, id, *applies),
+        Some(Edit::Weight(id, weight)) => db::weights::set(&session.conn, id, *weight),
+        None => return,
+    };
+    match result {
+        Ok(()) => {
+            if let Some(edit) = edit {
+                let id = match &edit {
+                    Edit::Applies(id, _) | Edit::Weight(id, _) => id,
+                };
+                if let Some(d) = dims.iter_mut().find(|d| &d.id == id) {
+                    match edit {
+                        Edit::Applies(_, applies) => d.applies = applies,
+                        Edit::Weight(_, weight) => d.weight = weight,
+                    }
                 }
-                session.revision += 1;
-                state.revision = session.revision;
-                state.error = None;
             }
-            Err(e) => state.error = Some(format!("{} {e:#}", copy::catalog::SAVE_FAILED)),
+            session.revision += 1;
+            state.revision = session.revision;
+            state.error = None;
         }
+        Err(e) => state.error = Some(format!("{} {e:#}", copy::catalog::SAVE_FAILED)),
     }
 }
 
-fn summary(ui: &mut Ui, p: &Palette, dims: &[Dimension]) {
+fn summary(ui: &mut Ui, p: &Palette, dims: &[Dimension], last_recalibrated: Option<&str>) {
     let active = dims.iter().filter(|d| d.is_active()).count();
     let sectors = dims
         .iter()
@@ -156,12 +176,23 @@ fn summary(ui: &mut Ui, p: &Palette, dims: &[Dimension]) {
         .map(|d| (&d.sector, &d.industry))
         .collect::<BTreeSet<_>>()
         .len();
-    ui.horizontal(|ui| {
-        ui.spacing_mut().item_spacing.x = space::MD;
+    let recalibrated = last_recalibrated.and_then(format::local_date).map_or_else(
+        || copy::comparables::NO_VALUE.to_owned(),
+        format::date_short,
+    );
+    ui.horizontal_wrapped(|ui| {
+        ui.spacing_mut().item_spacing = egui::vec2(space::MD, space::MD);
         for (label, value) in [
-            (copy::catalog::ACTIVE_DIMENSIONS, active),
-            (copy::catalog::SECTORS, sectors),
-            (copy::catalog::INDUSTRIES, industries),
+            (
+                copy::catalog::ACTIVE_DIMENSIONS,
+                format::thousands(active as u64),
+            ),
+            (copy::catalog::SECTORS, format::thousands(sectors as u64)),
+            (
+                copy::catalog::INDUSTRIES,
+                format::thousands(industries as u64),
+            ),
+            (copy::catalog::LAST_RECALIBRATED, recalibrated),
         ] {
             theme::card(p)
                 .inner_margin(egui::Margin::symmetric(space::LG as i8, space::MD as i8))
@@ -170,7 +201,7 @@ fn summary(ui: &mut Ui, p: &Palette, dims: &[Dimension]) {
                     ui.vertical(|ui| {
                         super::overline(ui, p, label);
                         ui.label(
-                            RichText::new(format::thousands(value as u64))
+                            RichText::new(value)
                                 .family(theme::family::mono_medium())
                                 .size(26.0),
                         );
@@ -244,8 +275,20 @@ fn filter_bar(
     });
 }
 
-/// Draws the table and returns a changed "Applies to me" toggle, if any.
-fn table(ui: &mut Ui, p: &Palette, dims: &[Dimension], shown: &[usize]) -> Option<(String, bool)> {
+/// A change made in the table.
+enum Edit {
+    Applies(String, bool),
+    Weight(String, f64),
+}
+
+/// Draws the table and returns the change made, if any.
+fn table(
+    ui: &mut Ui,
+    p: &Palette,
+    dims: &[Dimension],
+    shown: &[usize],
+    drafts: &mut HashMap<String, f64>,
+) -> Option<Edit> {
     let wide = ui.available_width() >= 900.0;
     let mut changed = None;
 
@@ -336,11 +379,9 @@ fn table(ui: &mut Ui, p: &Palette, dims: &[Dimension], shown: &[usize]) -> Optio
                     });
                 }
                 row.col(|ui| {
-                    ui.label(
-                        RichText::new(format!("{:.2}", d.weight))
-                            .monospace()
-                            .color(primary),
-                    );
+                    if let Some(w) = weight_cell(ui, primary, d, drafts) {
+                        changed = Some(Edit::Weight(d.id.clone(), w));
+                    }
                 });
                 row.col(|ui| {
                     let mut applies = d.applies;
@@ -349,10 +390,43 @@ fn table(ui: &mut Ui, p: &Palette, dims: &[Dimension], shown: &[usize]) -> Optio
                         .on_hover_text(copy::catalog::APPLIES_HINT)
                         .changed()
                     {
-                        changed = Some((d.id.clone(), applies));
+                        changed = Some(Edit::Applies(d.id.clone(), applies));
                     }
                 });
             });
         });
     changed
+}
+
+/// An editable weight. Returns a weight to save once a drag ends, or at once
+/// when typed.
+fn weight_cell(
+    ui: &mut Ui,
+    color: egui::Color32,
+    d: &Dimension,
+    drafts: &mut HashMap<String, f64>,
+) -> Option<f64> {
+    let mut value = drafts.get(&d.id).copied().unwrap_or(d.weight);
+    let response = ui
+        .scope(|ui| {
+            ui.visuals_mut().override_text_color = Some(color);
+            ui.add(
+                egui::DragValue::new(&mut value)
+                    .range(WEIGHT_MIN..=WEIGHT_MAX)
+                    .speed(0.005)
+                    .fixed_decimals(2),
+            )
+        })
+        .inner
+        .on_hover_text(copy::catalog::WEIGHT_HINT);
+    if response.dragged() {
+        drafts.insert(d.id.clone(), value);
+        None
+    } else if let Some(v) = drafts.remove(&d.id) {
+        (v != d.weight).then_some(v)
+    } else if response.changed() && value != d.weight {
+        Some(value)
+    } else {
+        None
+    }
 }

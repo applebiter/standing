@@ -85,3 +85,16 @@ pub mod discovery {
     /// rated themselves.
     pub const UNRATED_LEAD: f64 = 7.0;
 }
+
+/// Weight Drift.
+pub mod weights {
+    /// Added to a dimension's weight each time a rating is recorded on it.
+    pub const DRIFT_PER_RATING: f64 = 0.02;
+    /// A weight differing from its last recalibrated value by more than this
+    /// fraction prompts a recalibration notice.
+    pub const RECALIBRATION_THRESHOLD: f64 = 0.05;
+    /// Lowest weight that may be set by hand.
+    pub const MINIMUM: f64 = 0.10;
+    /// Highest weight that may be set by hand.
+    pub const MAXIMUM: f64 = 5.00;
+}
