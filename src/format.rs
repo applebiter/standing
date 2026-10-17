@@ -23,6 +23,16 @@ pub fn date_short(d: jiff::civil::Date) -> String {
     d.strftime("%-d %b %Y").to_string()
 }
 
+/// Day and month, for chart axes: `16 Oct`.
+pub fn date_day_month(d: jiff::civil::Date) -> String {
+    d.strftime("%-d %b").to_string()
+}
+
+/// A signed percentage with a true minus sign: `+1.30%`, `\u{2212}0.42%`.
+pub fn signed_percent(value: f64) -> String {
+    format!("{}%", signed(value))
+}
+
 /// The local calendar date of a stored timestamp, if it parses.
 pub fn local_date(stamp: &str) -> Option<jiff::civil::Date> {
     let t: jiff::Timestamp = stamp.parse().ok()?;

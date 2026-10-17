@@ -2,14 +2,17 @@
 //! besides `app` and `theme`.
 
 pub mod catalog;
+pub mod chart;
 pub mod comparable_form;
 pub mod comparables;
+pub mod dashboard;
 pub mod form;
 pub mod nav;
 pub mod pending;
 pub mod ratings;
 pub mod settings;
 pub mod startup_error;
+pub mod ticker_strip;
 
 use egui::{Align, Button, Layout, Response, RichText, Sense, Ui};
 
@@ -20,6 +23,7 @@ use crate::theme::{self, Palette, space};
 pub struct State {
     pub catalog: catalog::State,
     pub comparables: comparables::State,
+    pub dashboard: dashboard::State,
     pub ratings: ratings::State,
     pub settings: settings::State,
 }

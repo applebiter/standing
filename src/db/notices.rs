@@ -19,6 +19,26 @@ pub fn insert(conn: &Connection, kind: &str, body: &str, now: Timestamp) -> Resu
     Ok(())
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct Notice {
+    pub body: String,
+    pub created_at: String,
+}
+
+/// The most recent notices, newest first.
+pub fn recent(conn: &Connection, limit: usize) -> Result<Vec<Notice>> {
+    let mut stmt = conn.prepare(
+        "SELECT body, created_at FROM notices ORDER BY created_at DESC, id DESC LIMIT ?1",
+    )?;
+    let rows = stmt.query_map([limit as i64], |r| {
+        Ok(Notice {
+            body: r.get(0)?,
+            created_at: r.get(1)?,
+        })
+    })?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
 #[cfg(test)]
 pub fn bodies(conn: &Connection, kind: &str) -> Vec<String> {
     let mut stmt = conn

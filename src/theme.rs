@@ -21,6 +21,10 @@ pub struct Palette {
     /// Text drawn on an accent fill.
     pub on_accent: Color32,
     pub danger: Color32,
+    /// Index movement upward. Used for nothing else.
+    pub gain: Color32,
+    /// Index movement downward. Used for nothing else.
+    pub loss: Color32,
 }
 
 pub const LIGHT: Palette = Palette {
@@ -32,6 +36,8 @@ pub const LIGHT: Palette = Palette {
     accent: Color32::from_rgb(0x23, 0x45, 0x6B),
     on_accent: Color32::from_rgb(0xFB, 0xFA, 0xF7),
     danger: Color32::from_rgb(0x9A, 0x2B, 0x2B),
+    gain: Color32::from_rgb(0x1F, 0x6E, 0x4A),
+    loss: Color32::from_rgb(0xB0, 0x36, 0x2E),
 };
 
 pub const DARK: Palette = Palette {
@@ -43,6 +49,8 @@ pub const DARK: Palette = Palette {
     accent: Color32::from_rgb(0x8F, 0xB0, 0xD4),
     on_accent: Color32::from_rgb(0x12, 0x14, 0x16),
     danger: Color32::from_rgb(0xDE, 0x7A, 0x72),
+    gain: Color32::from_rgb(0x5C, 0xB8, 0x86),
+    loss: Color32::from_rgb(0xE5, 0x73, 0x69),
 };
 
 pub fn palette(dark_mode: bool) -> &'static Palette {

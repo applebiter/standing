@@ -36,3 +36,14 @@ pub mod event_weight {
     /// Applied to the Comparable observed.
     pub const COMPARABLE_THRIVING: f64 = 3.0;
 }
+
+/// Positions Held volatility, by the narrowest margin (adjusted rating points)
+/// by which the position is held.
+pub mod volatility {
+    /// At or above this margin: Low.
+    pub const LOW_FROM: f64 = 3.0;
+    /// At or above this margin: Moderate.
+    pub const MODERATE_FROM: f64 = 1.5;
+    /// At or above this margin: High. Below it: Extreme.
+    pub const HIGH_FROM: f64 = 0.5;
+}

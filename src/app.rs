@@ -196,7 +196,9 @@ impl eframe::App for Standing {
                     ui::page(ui, title, |ui| ui::pending::show(ui, &p, title, subtitle))
                 };
                 match self.screen {
-                    Screen::Dashboard => pending(ui, copy::pending::DASHBOARD),
+                    Screen::Dashboard => ui::page(ui, "dashboard", |ui| {
+                        ui::dashboard::show(ui, &p, session, &mut state.dashboard)
+                    }),
                     Screen::Comparables => {
                         ui::comparables::show(ui, &p, session, &mut state.comparables)
                     }

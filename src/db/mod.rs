@@ -8,6 +8,7 @@ pub mod notices;
 pub mod ratings;
 pub mod schema;
 pub mod snapshots;
+pub mod threshold;
 pub mod user;
 
 use std::path::{Path, PathBuf};

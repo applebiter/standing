@@ -32,8 +32,6 @@ pub mod status {
 pub mod pending {
     pub const BODY: &str = "This module is not installed in the current build.";
 
-    pub const DASHBOARD: (&str, &str) =
-        ("Dashboard", "Personal Standing Index and market summary.");
     pub const DAILY_FILING: (&str, &str) =
         ("Daily Filing", "Status events for the current market day.");
     pub const THRESHOLD: (&str, &str) = (
@@ -80,6 +78,84 @@ pub mod notices {
             format::index(candle.high),
         )
     }
+}
+
+pub mod dashboard {
+    use crate::engine::positions::Volatility;
+    use crate::format;
+
+    pub const PSI: &str = "Personal Standing Index";
+    pub fn change(change: f64, pct: f64) -> String {
+        let arrow = if change >= 0.005 {
+            "\u{25B2}"
+        } else if change <= -0.005 {
+            "\u{25BC}"
+        } else {
+            "\u{25C6}"
+        };
+        format!(
+            "{arrow} {} ({})",
+            format::signed(change),
+            format::signed_percent(pct)
+        )
+    }
+    pub const SINCE_CLOSE: &str = "Since previous close";
+    pub const SINCE_OPEN: &str = "Since today\u{2019}s open";
+    pub const NO_CLOSE: &str = "No previous close on record.";
+    pub const COMPOSITE: &str = "Composite standing";
+    pub const MOMENTUM: &str = "Momentum";
+    pub const THRESHOLD: &str = "Enough Threshold";
+    pub const DISTANCE: &str = "Shortfall";
+
+    pub const SPOTLIGHT: &str = "Spotlight Monitor";
+    pub const SPOTLIGHT_LABEL: &str = "People currently thinking about you";
+    pub fn margin(m: u64) -> String {
+        format!("(\u{00B1}{})", format::thousands(m))
+    }
+    pub fn last_nonzero(at: Option<jiff::Zoned>) -> String {
+        match at {
+            Some(z) => format!(
+                "Last non-zero reading: {}",
+                z.strftime("%-d %B %Y, %H:%M:%S")
+            ),
+            None => "Last non-zero reading: None recorded".to_owned(),
+        }
+    }
+    pub fn reading_taken(at: &jiff::Zoned) -> String {
+        format!("Reading taken {}.", at.strftime("%H:%M:%S"))
+    }
+
+    pub const HISTORY: &str = "Index history";
+    pub const RANGE_MONTH: &str = "1M";
+    pub const RANGE_QUARTER: &str = "3M";
+    pub const RANGE_YEAR: &str = "1Y";
+    pub const RANGE_ALL: &str = "All";
+    pub const NO_HISTORY: &str = "No market history on record.";
+    pub const THRESHOLD_LINE: &str = "Enough Threshold";
+    pub const OPEN: &str = "Open";
+    pub const HIGH: &str = "High";
+    pub const LOW: &str = "Low";
+    pub const CLOSE: &str = "Close";
+
+    pub const POSITIONS: &str = "Positions Held";
+    pub const NO_POSITIONS: &str = "No positions currently held.";
+    pub fn volatility(v: Volatility) -> &'static str {
+        match v {
+            Volatility::Low => "Low volatility",
+            Volatility::Moderate => "Moderate volatility",
+            Volatility::High => "High volatility",
+            Volatility::Extreme => "Extreme volatility",
+        }
+    }
+    pub fn more_positions(n: usize) -> String {
+        format!("And {} more.", format::thousands(n as u64))
+    }
+
+    pub const PEERS: &str = "Comparables";
+    pub const COL_CHANGE: &str = "Change";
+    pub const NOTICES: &str = "Notices";
+    pub const NO_NOTICES: &str = "No notices.";
+    pub const LOAD_FAILED: &str = "The dashboard could not be loaded.";
 }
 
 pub mod form {

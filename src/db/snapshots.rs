@@ -67,6 +67,22 @@ pub fn between(
     Ok(out)
 }
 
+/// When the first value for one subject was recorded.
+pub fn first_at(conn: &Connection, subject: Subject) -> Result<Option<Timestamp>> {
+    let first: Option<String> = conn
+        .query_row(
+            &format!(
+                "SELECT MIN(computed_at) FROM index_snapshots WHERE {}",
+                subject_clause()
+            ),
+            params![subject.kind(), subject.comparable_id()],
+            |r| r.get(0),
+        )
+        .optional()?
+        .flatten();
+    Ok(first.and_then(|s| s.parse().ok()))
+}
+
 /// The last value for one subject before `before`.
 pub fn last_before(conn: &Connection, subject: Subject, before: Timestamp) -> Result<Option<f64>> {
     Ok(conn
