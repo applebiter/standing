@@ -11,6 +11,9 @@ pub mod user;
 pub enum FieldError {
     Required,
     TooLong,
+    NotANumber,
+    /// Outside the range a threshold may take.
+    ThresholdRange,
 }
 
 /// Field errors from validating a form, in form order.
@@ -45,6 +48,24 @@ pub fn optional_bounded(value: &str) -> Result<Option<String>, FieldError> {
     }
 }
 
+/// Parses a threshold as typed: a number from the minimum to the maximum,
+/// with up to two decimal places. Thousands separators are accepted.
+pub fn threshold(value: &str) -> Result<f64, FieldError> {
+    use crate::engine::constants::threshold::{MAXIMUM, MINIMUM};
+    let cleaned: String = value.trim().chars().filter(|c| *c != ',').collect();
+    if cleaned.is_empty() {
+        return Err(FieldError::Required);
+    }
+    let v: f64 = cleaned.parse().map_err(|_| FieldError::NotANumber)?;
+    if !v.is_finite() {
+        return Err(FieldError::NotANumber);
+    }
+    if !(MINIMUM..=MAXIMUM).contains(&v) {
+        return Err(FieldError::ThresholdRange);
+    }
+    Ok((v * 100.0).round() / 100.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -59,5 +80,20 @@ mod tests {
             optional_bounded(" college roommate "),
             Ok(Some("college roommate".to_owned()))
         );
+    }
+
+    #[test]
+    fn threshold_input() {
+        assert_eq!(threshold(" 120 "), Ok(120.0));
+        assert_eq!(threshold("1,250.5"), Ok(1250.5));
+        assert_eq!(threshold("110.456"), Ok(110.46));
+        assert_eq!(threshold(""), Err(FieldError::Required));
+        assert_eq!(threshold("enough"), Err(FieldError::NotANumber));
+        assert_eq!(threshold("NaN"), Err(FieldError::NotANumber));
+        assert_eq!(threshold("inf"), Err(FieldError::NotANumber));
+        assert_eq!(threshold("0.5"), Err(FieldError::ThresholdRange));
+        assert_eq!(threshold("-10"), Err(FieldError::ThresholdRange));
+        assert_eq!(threshold("10000.01"), Err(FieldError::ThresholdRange));
+        assert_eq!(threshold("1"), Ok(1.0));
     }
 }

@@ -47,3 +47,14 @@ pub mod volatility {
     /// At or above this margin: High. Below it: Extreme.
     pub const HIGH_FROM: f64 = 0.5;
 }
+
+/// The Enough Threshold.
+pub mod threshold {
+    /// When the index reaches the threshold, the threshold is multiplied by
+    /// this factor and rounded up to the next whole point.
+    pub const ADJUSTMENT_FACTOR: f64 = 1.20;
+    /// Lowest threshold that may be set.
+    pub const MINIMUM: f64 = 1.0;
+    /// Highest threshold that may be set.
+    pub const MAXIMUM: f64 = 10_000.0;
+}

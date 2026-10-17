@@ -9,6 +9,7 @@ use super::{Result, stamp};
 /// Kinds of notice. Stored as their string value.
 pub mod kind {
     pub const MARKET_CLOSE: &str = "market_close";
+    pub const THRESHOLD: &str = "threshold";
 }
 
 pub fn insert(conn: &Connection, kind: &str, body: &str, now: Timestamp) -> Result<()> {

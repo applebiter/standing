@@ -32,10 +32,6 @@ pub mod status {
 pub mod pending {
     pub const BODY: &str = "This module is not installed in the current build.";
 
-    pub const THRESHOLD: (&str, &str) = (
-        "Enough Threshold",
-        "The index level at which you will feel secure.",
-    );
     pub const REPORTS: (&str, &str) = ("Reports", "Quarterly earnings calls and exports.");
 }
 
@@ -47,6 +43,17 @@ pub mod engine {
 pub mod notices {
     use crate::engine::market::Candle;
     use crate::format;
+
+    /// The reason recorded for every Enough Threshold adjustment.
+    pub const THRESHOLD_REASON: &str = "Threshold adjusted to reflect current market conditions.";
+
+    pub fn threshold_adjusted(prior: f64, new: f64) -> String {
+        format!(
+            "Enough Threshold revised from {} to {}. {THRESHOLD_REASON}",
+            format::index(prior),
+            format::index(new)
+        )
+    }
 
     /// The daily summary posted when a market day closes.
     pub fn market_close(day: jiff::civil::Date, candle: &Candle, previous: Option<f64>) -> String {
@@ -243,6 +250,44 @@ pub mod filing {
     pub const WRITE_FAILED: &str = "The filing could not be recorded.";
 }
 
+pub mod threshold {
+    use crate::db::threshold::Reason;
+
+    pub const TITLE: &str = "Enough Threshold";
+    pub const SUBTITLE: &str = "The index level at which you will feel secure.";
+    pub const CURRENT: &str = "Current threshold";
+    pub fn set_on(date: &str) -> String {
+        format!("In effect since {date}.")
+    }
+    pub const NOT_SET: &str = "No threshold set.";
+    pub const NOT_SET_BODY: &str =
+        "Enter the Personal Standing Index value at which you will feel secure.";
+    pub const PSI: &str = "Personal Standing Index";
+    pub const SHORTFALL: &str = "Shortfall";
+    pub const REVISE: &str = "Revise threshold";
+    pub const SET: &str = "Set threshold";
+    pub const FIELD_HELP: &str = "An index value from 1 to 10,000.";
+    pub const SAVE: &str = "Save";
+    pub const SAVED: &str = "Threshold saved.";
+    pub const UNCHANGED: &str = "That is the current threshold.";
+
+    pub const HISTORY: &str = "Threshold History";
+    pub const NO_HISTORY: &str = "No changes recorded.";
+    pub const COL_DATE: &str = "Date";
+    pub const COL_PRIOR: &str = "Prior";
+    pub const COL_NEW: &str = "New";
+    pub const COL_REASON: &str = "Reason";
+    pub fn reason(r: Reason) -> &'static str {
+        match r {
+            Reason::Initial => "Initial threshold.",
+            Reason::User => "Set by user.",
+            Reason::Adjustment => super::notices::THRESHOLD_REASON,
+        }
+    }
+    pub const LOAD_FAILED: &str = "The threshold could not be loaded.";
+    pub const WRITE_FAILED: &str = "The threshold could not be saved.";
+}
+
 pub mod form {
     use crate::model::FieldError;
 
@@ -253,6 +298,8 @@ pub mod form {
         match e {
             FieldError::Required => "This field is required.",
             FieldError::TooLong => "Enter 120 characters or fewer.",
+            FieldError::NotANumber => "Enter a number.",
+            FieldError::ThresholdRange => "Enter a value from 1 to 10,000.",
         }
     }
 }

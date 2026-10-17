@@ -10,6 +10,7 @@ use rusqlite::Connection;
 
 use super::index::{self, ComparableRatings, Inputs, Reading, WeightedDimension};
 use super::market;
+use super::threshold::{self, Adjustment};
 use crate::copy;
 use crate::db::{self, notices};
 use crate::model::rating::Subject;
@@ -55,11 +56,40 @@ pub fn inputs(conn: &Connection) -> db::Result<Inputs> {
     })
 }
 
-/// Recomputes the index from the record and records the result.
-pub fn recompute(conn: &mut Connection, now: Timestamp) -> db::Result<Reading> {
+/// The result of a recomputation.
+#[derive(Debug)]
+pub struct Recomputed {
+    pub reading: Reading,
+    /// Enough Threshold adjustments made, in order.
+    pub adjustments: Vec<Adjustment>,
+}
+
+/// Recomputes the index from the record, records the result, and adjusts the
+/// Enough Threshold if the index has reached it.
+pub fn recompute(conn: &mut Connection, now: Timestamp) -> db::Result<Recomputed> {
     let reading = index::compute(&inputs(conn)?, now);
     db::snapshots::insert_reading(conn, &reading)?;
-    Ok(reading)
+    let adjustments = match db::threshold::current(conn)? {
+        Some(t) => threshold::adjustments(t, reading.psi),
+        None => Vec::new(),
+    };
+    if !adjustments.is_empty() {
+        let tx = conn.transaction()?;
+        for a in &adjustments {
+            db::threshold::set(&tx, a.new, db::threshold::Reason::Adjustment, now)?;
+            notices::insert(
+                &tx,
+                notices::kind::THRESHOLD,
+                &copy::notices::threshold_adjusted(a.prior, a.new),
+                now,
+            )?;
+        }
+        tx.commit()?;
+    }
+    Ok(Recomputed {
+        reading,
+        adjustments,
+    })
 }
 
 /// What a market check did.
@@ -147,7 +177,7 @@ mod tests {
         // Hidden dimensions do not count, even if rated.
         db::ratings::insert(&conn, Subject::Own, "DOM-004", 0.0, t).unwrap();
 
-        let r = recompute(&mut conn, t).unwrap();
+        let r = recompute(&mut conn, t).unwrap().reading;
         assert!((r.psi - 75.0).abs() < 1e-9);
         assert!((r.comparables[0].value - 125.0).abs() < 1e-9);
         let rows: i64 = conn
@@ -171,9 +201,51 @@ mod tests {
         .unwrap();
         db::ratings::insert(&conn, Subject::Own, "MAT-014", 4.0, t).unwrap();
         db::comparables::set_active(&conn, dana.id, false).unwrap();
-        let r = recompute(&mut conn, t).unwrap();
+        let r = recompute(&mut conn, t).unwrap().reading;
         assert!(r.comparables.is_empty());
         assert!((r.psi - 100.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn reaching_the_threshold_adjusts_it_with_history_and_notices() {
+        let mut conn = setup();
+        let t = at("2026-10-16T14:00:00Z");
+        // No Comparables: PSI = 100.
+        db::threshold::set(&conn, 50.0, db::threshold::Reason::Initial, t).unwrap();
+        let r = recompute(&mut conn, t).unwrap();
+        let steps: Vec<(f64, f64)> = r.adjustments.iter().map(|a| (a.prior, a.new)).collect();
+        assert_eq!(
+            steps,
+            [(50.0, 60.0), (60.0, 72.0), (72.0, 87.0), (87.0, 105.0)]
+        );
+        assert_eq!(db::threshold::current(&conn).unwrap(), Some(105.0));
+        let history = db::threshold::history(&conn).unwrap();
+        assert_eq!(history.len(), 5);
+        assert!(
+            history[..4]
+                .iter()
+                .all(|e| e.reason == db::threshold::Reason::Adjustment)
+        );
+        let notices = notices::bodies(&conn, notices::kind::THRESHOLD);
+        assert_eq!(notices.len(), 4);
+        assert!(
+            notices
+                .iter()
+                .all(|n| n.ends_with(copy::notices::THRESHOLD_REASON))
+        );
+
+        // Below the threshold now: nothing further.
+        assert!(recompute(&mut conn, t).unwrap().adjustments.is_empty());
+    }
+
+    #[test]
+    fn exactly_at_the_threshold_counts_as_reaching_it() {
+        let mut conn = setup();
+        let t = at("2026-10-16T14:00:00Z");
+        db::threshold::set(&conn, 100.0, db::threshold::Reason::Initial, t).unwrap();
+        let r = recompute(&mut conn, t).unwrap();
+        assert_eq!(r.adjustments.len(), 1);
+        assert_eq!(db::threshold::current(&conn).unwrap(), Some(120.0));
     }
 
     #[test]

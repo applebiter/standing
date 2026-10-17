@@ -70,7 +70,7 @@ CREATE TABLE threshold_history (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   prior_value REAL,
   new_value   REAL NOT NULL CHECK (new_value >= 1),
-  reason      TEXT NOT NULL CHECK (reason IN ('initial', 'user', 'ratchet')),
+  reason      TEXT NOT NULL CHECK (reason IN ('initial', 'user', 'adjustment')),
   changed_at  TEXT NOT NULL
 );
 

@@ -13,6 +13,7 @@ pub mod pending;
 pub mod ratings;
 pub mod settings;
 pub mod startup_error;
+pub mod threshold;
 pub mod ticker_strip;
 
 use egui::{Align, Button, Layout, Response, RichText, Sense, Ui};
@@ -28,6 +29,7 @@ pub struct State {
     pub dashboard: dashboard::State,
     pub ratings: ratings::State,
     pub settings: settings::State,
+    pub threshold: threshold::State,
 }
 
 /// A one-line confirmation or failure message shown above a list.

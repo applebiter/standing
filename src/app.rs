@@ -108,8 +108,17 @@ impl Session {
         if self.computed_revision != Some(self.revision) {
             self.computed_revision = Some(self.revision);
             self.compute_error = match run::recompute(&mut self.conn, now) {
-                Ok(reading) => {
+                Ok(run::Recomputed {
+                    reading,
+                    adjustments,
+                }) => {
                     self.reading = Some(reading);
+                    if !adjustments.is_empty() {
+                        // The threshold and notices changed; screens must
+                        // re-query, but the index itself is current.
+                        self.revision += 1;
+                        self.computed_revision = Some(self.revision);
+                    }
                     None
                 }
                 Err(e) => Some(format!("{} {e:#}", copy::engine::FAILED)),
@@ -207,7 +216,9 @@ impl eframe::App for Standing {
                         ui::daily_filing::show(ui, &p, session, &mut state.daily_filing)
                     }),
                     Screen::Catalog => ui::catalog::show(ui, &p, session, &mut state.catalog),
-                    Screen::Threshold => pending(ui, copy::pending::THRESHOLD),
+                    Screen::Threshold => ui::page(ui, "threshold", |ui| {
+                        ui::threshold::show(ui, &p, session, &mut state.threshold)
+                    }),
                     Screen::Reports => pending(ui, copy::pending::REPORTS),
                     Screen::Settings => ui::page(ui, "settings", |ui| {
                         ui::settings::show(ui, &p, session, &mut state.settings)
