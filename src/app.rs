@@ -235,9 +235,6 @@ impl eframe::App for Standing {
                     ui.add_space(theme::space::MD);
                 }
                 let state = &mut self.ui_state;
-                let pending = |ui: &mut egui::Ui, (title, subtitle): (&str, &str)| {
-                    ui::page(ui, title, |ui| ui::pending::show(ui, &p, title, subtitle))
-                };
                 match self.screen {
                     Screen::Dashboard => ui::page(ui, "dashboard", |ui| {
                         ui::dashboard::show(ui, &p, session, &mut state.dashboard)
@@ -256,7 +253,9 @@ impl eframe::App for Standing {
                     Screen::Threshold => ui::page(ui, "threshold", |ui| {
                         ui::threshold::show(ui, &p, session, &mut state.threshold)
                     }),
-                    Screen::Reports => pending(ui, copy::pending::REPORTS),
+                    Screen::Reports => ui::page(ui, "reports", |ui| {
+                        ui::reports::show(ui, &p, session, &mut state.reports)
+                    }),
                     Screen::Settings => ui::page(ui, "settings", |ui| {
                         ui::settings::show(ui, &p, session, &mut state.settings)
                     }),

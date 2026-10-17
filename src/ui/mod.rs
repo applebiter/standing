@@ -11,8 +11,8 @@ pub mod form;
 pub mod nav;
 pub mod notices;
 pub mod onboarding;
-pub mod pending;
 pub mod ratings;
+pub mod reports;
 pub mod settings;
 pub mod startup_error;
 pub mod threshold;
@@ -32,6 +32,7 @@ pub struct State {
     pub notices: notices::State,
     pub onboarding: onboarding::State,
     pub ratings: ratings::State,
+    pub reports: reports::State,
     pub settings: settings::State,
     pub threshold: threshold::State,
 }

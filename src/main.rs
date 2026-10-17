@@ -5,6 +5,7 @@ mod db;
 mod engine;
 mod format;
 mod model;
+mod report;
 mod settings;
 mod theme;
 mod ui;

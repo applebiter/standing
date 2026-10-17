@@ -29,13 +29,6 @@ pub mod status {
     pub const BUILD: &str = "Build";
 }
 
-/// Titles and descriptions for screens whose modules are not yet installed.
-pub mod pending {
-    pub const BODY: &str = "This module is not installed in the current build.";
-
-    pub const REPORTS: (&str, &str) = ("Reports", "Quarterly earnings calls and exports.");
-}
-
 pub mod engine {
     pub const FAILED: &str = "The index could not be computed.";
     pub const MARKET_FAILED: &str = "Market hours could not be applied.";
@@ -388,6 +381,31 @@ pub mod onboarding {
 
     pub const LOAD_FAILED: &str = "Onboarding could not be loaded.";
     pub const SAVE_FAILED: &str = "Your progress could not be saved.";
+}
+
+pub mod reports {
+    pub const TITLE: &str = "Reports";
+    pub const SUBTITLE: &str = "Quarterly earnings calls, prepared from your record.";
+    pub fn quarter_option(quarter: &str) -> String {
+        format!("{quarter} Earnings Call")
+    }
+    pub const EXPORT_MARKDOWN: &str = "Export Markdown";
+    pub const EXPORT_HTML: &str = "Export HTML";
+    pub const FILTER_MARKDOWN: &str = "Markdown";
+    pub const FILTER_HTML: &str = "HTML";
+    pub fn exported(path: &str) -> String {
+        format!("Report saved to {path}.")
+    }
+    pub const TRANSCRIPT: &str = "Transcript";
+    pub const HIGHLIGHTS: &str = "Highlights";
+    pub const SUPPLEMENT_HEADWINDS: &str = "Supplementary Information: Headwinds";
+    pub const SUPPLEMENT_FILINGS: &str = "Supplementary Information: Daily Filings";
+    pub const SPREAD_NOTE: &str =
+        "Spread is the reporting party's adjusted rating less that of the leading Comparable.";
+    /// Used in reports when no display name has been set.
+    pub const UNNAMED: &str = "The Reporting Party";
+    pub const LOAD_FAILED: &str = "The report could not be prepared.";
+    pub const EXPORT_FAILED: &str = "The report could not be saved.";
 }
 
 pub mod form {
