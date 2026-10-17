@@ -67,6 +67,55 @@ pub fn insert(conn: &Connection, fields: &ComparableFields, now: Timestamp) -> R
     )?)
 }
 
+/// Adds a Comparable introduced from the user's extended social graph.
+pub fn insert_archetype(
+    conn: &Connection,
+    name: &str,
+    template: &str,
+    now: Timestamp,
+) -> Result<Comparable> {
+    let tickers = tickers(conn)?;
+    let ticker = issue_ticker(name, tickers.iter().map(String::as_str));
+    conn.execute(
+        "INSERT INTO comparables (name, ticker, origin, archetype_template, created_at)
+         VALUES (?1, ?2, ?3, ?4, ?5)",
+        params![
+            name,
+            ticker,
+            Origin::Archetype.as_str(),
+            template,
+            stamp(now)
+        ],
+    )?;
+    let id = conn.last_insert_rowid();
+    Ok(conn.query_row(
+        &format!("SELECT {COLUMNS} FROM comparables WHERE id = ?1"),
+        [id],
+        from_row,
+    )?)
+}
+
+/// Identifies an introduced Comparable: amends name and relationship, records
+/// the claim, and confirms the ratings recorded for them so far.
+pub fn claim(
+    conn: &mut Connection,
+    id: i64,
+    fields: &ComparableFields,
+    now: Timestamp,
+) -> Result<()> {
+    let tx = conn.transaction()?;
+    tx.execute(
+        "UPDATE comparables SET name = ?2, relationship = ?3, claimed_at = ?4 WHERE id = ?1",
+        params![id, fields.name, fields.relationship, stamp(now)],
+    )?;
+    tx.execute(
+        "UPDATE ratings SET provisional = 0 WHERE comparable_id = ?1",
+        [id],
+    )?;
+    tx.commit()?;
+    Ok(())
+}
+
 /// Amends name and relationship. The ticker is unchanged.
 pub fn update(conn: &Connection, id: i64, fields: &ComparableFields) -> Result<()> {
     conn.execute(
@@ -142,6 +191,40 @@ mod tests {
         assert_eq!(all[0].name, "Dana R.");
         assert_eq!(all[0].ticker, "DANA");
         assert!(active(&conn).unwrap().is_empty());
+    }
+
+    #[test]
+    fn claiming_confirms_provisional_ratings() {
+        let mut conn = db::open_in_memory().unwrap();
+        crate::catalog::sync(
+            &mut conn,
+            &crate::catalog::parse(
+                "id,sector,industry,name,definition,discovery\n\
+                 MAT-014,Material Holdings,Vehicles,Boat,Watercraft.,0\n",
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let a = insert_archetype(&conn, "Your landlord", "landlord", now()).unwrap();
+        assert_eq!(a.origin, Origin::Archetype);
+        assert_eq!(a.archetype_template.as_deref(), Some("landlord"));
+        assert_eq!(a.ticker, "YL");
+        db::ratings::insert_provisional(&conn, a.id, "MAT-014", 8.5, now()).unwrap();
+        let provisional = |conn: &Connection| -> bool {
+            db::ratings::current(conn)
+                .unwrap()
+                .values()
+                .next()
+                .unwrap()
+                .provisional
+        };
+        assert!(provisional(&conn));
+
+        claim(&mut conn, a.id, &fields("Gordon"), now()).unwrap();
+        let c = &all(&conn).unwrap()[0];
+        assert_eq!((c.name.as_str(), c.ticker.as_str()), ("Gordon", "YL"));
+        assert!(c.claimed_at.is_some());
+        assert!(!provisional(&conn));
     }
 
     #[test]

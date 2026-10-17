@@ -165,8 +165,8 @@ fn table(
         .cell_layout(Layout::left_to_right(Align::Center))
         .auto_shrink([false, true])
         .column(Column::exact(84.0))
-        .column(Column::initial(150.0).clip(true))
-        .column(Column::remainder().at_least(110.0).clip(true))
+        .column(Column::initial(165.0).clip(true))
+        .column(Column::remainder().at_least(105.0).clip(true))
         .column(Column::exact(72.0))
         .column(Column::exact(100.0))
         .column(Column::exact(96.0));
@@ -220,7 +220,14 @@ fn table(
                         .family(theme::family::mono_medium())
                         .color(primary),
                 );
-                cell(&mut row, RichText::new(&c.name).color(primary));
+                row.col(|ui| {
+                    ui.add(
+                        egui::Label::new(RichText::new(&c.name).color(primary))
+                            .truncate()
+                            .selectable(false),
+                    )
+                    .on_hover_text(&c.name);
+                });
                 cell(
                     &mut row,
                     RichText::new(c.relationship.as_deref().unwrap_or("")).color(p.text_secondary),
@@ -252,10 +259,12 @@ fn table(
                     cell(&mut row, RichText::new(last).color(p.text_secondary));
                     cell(
                         &mut row,
-                        RichText::new(if c.active {
-                            copy::comparables::STATUS_ACTIVE
-                        } else {
+                        RichText::new(if !c.active {
                             copy::comparables::STATUS_INACTIVE
+                        } else if comparable_form::is_unclaimed(c) {
+                            copy::comparables::STATUS_PROVISIONAL
+                        } else {
+                            copy::comparables::STATUS_ACTIVE
                         })
                         .color(p.text_secondary),
                     );

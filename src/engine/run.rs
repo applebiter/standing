@@ -10,9 +10,11 @@ use rusqlite::Connection;
 
 use super::index::{self, ComparableRatings, Inputs, Reading, WeightedDimension};
 use super::market;
+use super::rebalance;
 use super::threshold::{self, Adjustment};
 use crate::copy;
 use crate::db::{self, notices};
+use crate::model::comparable::{Comparable, Origin};
 use crate::model::rating::Subject;
 
 /// Gathers the current record into the index's inputs.
@@ -62,12 +64,16 @@ pub struct Recomputed {
     pub reading: Reading,
     /// Enough Threshold adjustments made, in order.
     pub adjustments: Vec<Adjustment>,
+    /// A Comparable introduced by Peer Set Rebalancing. The reading predates it.
+    pub introduced: Option<Comparable>,
 }
 
-/// Recomputes the index from the record, records the result, and adjusts the
-/// Enough Threshold if the index has reached it.
-pub fn recompute(conn: &mut Connection, now: Timestamp) -> db::Result<Recomputed> {
-    let reading = index::compute(&inputs(conn)?, now);
+/// Recomputes the index from the record, records the result, adjusts the
+/// Enough Threshold if the index has reached it, and rebalances the peer set
+/// if the user leads every Comparable.
+pub fn recompute(conn: &mut Connection, now: Timestamp, tz: &TimeZone) -> db::Result<Recomputed> {
+    let inputs = inputs(conn)?;
+    let reading = index::compute(&inputs, now);
     db::snapshots::insert_reading(conn, &reading)?;
     let adjustments = match db::threshold::current(conn)? {
         Some(t) => threshold::adjustments(t, reading.psi),
@@ -86,10 +92,72 @@ pub fn recompute(conn: &mut Connection, now: Timestamp) -> db::Result<Recomputed
         }
         tx.commit()?;
     }
+    let introduced = rebalance(conn, &inputs, &reading, now, tz)?;
     Ok(Recomputed {
         reading,
         adjustments,
+        introduced,
     })
+}
+
+/// Introduces an archetype if one is due, with provisional ratings and a notice.
+fn rebalance(
+    conn: &mut Connection,
+    inputs: &Inputs,
+    reading: &Reading,
+    now: Timestamp,
+    tz: &TimeZone,
+) -> db::Result<Option<Comparable>> {
+    let all = db::comparables::all(conn)?;
+    let archetypes: Vec<&Comparable> = all
+        .iter()
+        .filter(|c| c.origin == Origin::Archetype)
+        .collect();
+    let today = market::day_of(now, tz);
+    let introduced_today = archetypes.iter().any(|c| {
+        c.created_at
+            .parse::<Timestamp>()
+            .is_ok_and(|t| market::day_of(t, tz) == today)
+    });
+    if !rebalance::due(reading, introduced_today) {
+        return Ok(None);
+    }
+    let names: Vec<String> = all
+        .iter()
+        .filter(|c| c.active && (c.origin == Origin::User || c.claimed_at.is_some()))
+        .map(|c| c.name.clone())
+        .collect();
+    let used: Vec<String> = archetypes
+        .iter()
+        .filter_map(|c| c.archetype_template.clone())
+        .collect();
+    let profile = db::user::get(conn)?;
+    let archetype = rebalance::introduce(
+        &rebalance::Context {
+            seed: profile.as_ref().map_or(0, |p| p.rng_seed),
+            introduced: archetypes.len() as u64,
+            names: &names,
+            field: profile.as_ref().and_then(|p| p.field.as_deref()),
+            used: &used,
+        },
+        inputs,
+    );
+
+    let tx = conn.transaction()?;
+    let c = db::comparables::insert_archetype(&tx, &archetype.name, archetype.template, now)?;
+    let mut ratings: Vec<_> = archetype.ratings.iter().collect();
+    ratings.sort_by(|a, b| a.0.cmp(b.0));
+    for (dim, value) in ratings {
+        db::ratings::insert_provisional(&tx, c.id, dim, *value, now)?;
+    }
+    notices::insert(
+        &tx,
+        notices::kind::REBALANCE,
+        &copy::notices::comparable_added(&c.name, &c.ticker),
+        now,
+    )?;
+    tx.commit()?;
+    Ok(Some(c))
 }
 
 /// What a market check did.
@@ -177,7 +245,7 @@ mod tests {
         // Hidden dimensions do not count, even if rated.
         db::ratings::insert(&conn, Subject::Own, "DOM-004", 0.0, t).unwrap();
 
-        let r = recompute(&mut conn, t).unwrap().reading;
+        let r = recompute(&mut conn, t, &tz()).unwrap().reading;
         assert!((r.psi - 75.0).abs() < 1e-9);
         assert!((r.comparables[0].value - 125.0).abs() < 1e-9);
         let rows: i64 = conn
@@ -201,7 +269,7 @@ mod tests {
         .unwrap();
         db::ratings::insert(&conn, Subject::Own, "MAT-014", 4.0, t).unwrap();
         db::comparables::set_active(&conn, dana.id, false).unwrap();
-        let r = recompute(&mut conn, t).unwrap().reading;
+        let r = recompute(&mut conn, t, &tz()).unwrap().reading;
         assert!(r.comparables.is_empty());
         assert!((r.psi - 100.0).abs() < 1e-9);
     }
@@ -212,7 +280,7 @@ mod tests {
         let t = at("2026-10-16T14:00:00Z");
         // No Comparables: PSI = 100.
         db::threshold::set(&conn, 50.0, db::threshold::Reason::Initial, t).unwrap();
-        let r = recompute(&mut conn, t).unwrap();
+        let r = recompute(&mut conn, t, &tz()).unwrap();
         let steps: Vec<(f64, f64)> = r.adjustments.iter().map(|a| (a.prior, a.new)).collect();
         assert_eq!(
             steps,
@@ -235,7 +303,12 @@ mod tests {
         );
 
         // Below the threshold now: nothing further.
-        assert!(recompute(&mut conn, t).unwrap().adjustments.is_empty());
+        assert!(
+            recompute(&mut conn, t, &tz())
+                .unwrap()
+                .adjustments
+                .is_empty()
+        );
     }
 
     #[test]
@@ -243,9 +316,51 @@ mod tests {
         let mut conn = setup();
         let t = at("2026-10-16T14:00:00Z");
         db::threshold::set(&conn, 100.0, db::threshold::Reason::Initial, t).unwrap();
-        let r = recompute(&mut conn, t).unwrap();
+        let r = recompute(&mut conn, t, &tz()).unwrap();
         assert_eq!(r.adjustments.len(), 1);
         assert_eq!(db::threshold::current(&conn).unwrap(), Some(120.0));
+    }
+
+    #[test]
+    fn leading_everyone_introduces_one_archetype_a_day() {
+        let mut conn = setup();
+        let t = at("2026-10-16T14:00:00Z");
+        db::user::ensure(&conn, 42, t).unwrap();
+        let dana = db::comparables::insert(
+            &conn,
+            &ComparableFields {
+                name: "Dana".into(),
+                relationship: None,
+            },
+            t,
+        )
+        .unwrap();
+        db::ratings::insert(&conn, Subject::Own, "MAT-014", 10.0, t).unwrap();
+        db::ratings::insert(&conn, Subject::Comparable(dana.id), "MAT-014", 1.0, t).unwrap();
+
+        let first = recompute(&mut conn, t, &tz()).unwrap();
+        let archetype = first.introduced.expect("the user leads every Comparable");
+        assert_eq!(archetype.origin, Origin::Archetype);
+        assert_eq!(
+            notices::bodies(&conn, notices::kind::REBALANCE).len(),
+            1,
+            "one notice"
+        );
+        let after = recompute(&mut conn, t, &tz()).unwrap();
+        assert!(after.introduced.is_none());
+        let theirs = after.reading.comparable(archetype.id).unwrap();
+        assert!(theirs.composite.unwrap() > after.reading.own_composite.unwrap());
+        let current = db::ratings::current(&conn).unwrap();
+        assert!(current[&(Subject::Comparable(archetype.id), "MAT-014".into())].provisional);
+
+        // The user rates the newcomer down and leads again: not today.
+        db::ratings::insert(&conn, Subject::Comparable(archetype.id), "MAT-014", 0.0, t).unwrap();
+        assert!(recompute(&mut conn, t, &tz()).unwrap().introduced.is_none());
+        // The next market day, another is introduced.
+        let tomorrow = at("2026-10-17T14:00:00Z");
+        let next = recompute(&mut conn, tomorrow, &tz()).unwrap();
+        let second = next.introduced.expect("leading again the next day");
+        assert_ne!(second.archetype_template, archetype.archetype_template);
     }
 
     #[test]
@@ -270,7 +385,7 @@ mod tests {
                 opened: true
             }
         );
-        recompute(&mut conn, monday).unwrap();
+        recompute(&mut conn, monday, &tz()).unwrap();
         let again = market_check(&conn, at("2026-10-14T20:00:00Z"), &tz()).unwrap();
         assert!(!again.opened);
 

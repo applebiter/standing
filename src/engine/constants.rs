@@ -58,3 +58,17 @@ pub mod threshold {
     /// Highest threshold that may be set.
     pub const MAXIMUM: f64 = 10_000.0;
 }
+
+/// Provisional estimates for Comparables introduced by Peer Set Rebalancing.
+pub mod rebalance {
+    use std::ops::Range;
+
+    /// Chance that an estimate is placed above the user's raw rating.
+    pub const PROBABILITY_ABOVE: f64 = 0.7;
+    /// Raw points added when placed above.
+    pub const ABOVE_RANGE: Range<f64> = 0.3..1.5;
+    /// Raw points subtracted when placed below.
+    pub const BELOW_RANGE: Range<f64> = 0.0..1.0;
+    /// Draws attempted before every estimate is placed above.
+    pub const MAX_ATTEMPTS: usize = 8;
+}

@@ -55,6 +55,13 @@ pub mod notices {
         )
     }
 
+    pub fn comparable_added(name: &str, ticker: &str) -> String {
+        format!(
+            "A new Comparable has been added to your peer set. {name} ({ticker}) was \
+             identified from your extended social graph."
+        )
+    }
+
     /// The daily summary posted when a market day closes.
     pub fn market_close(day: jiff::civil::Date, candle: &Candle, previous: Option<f64>) -> String {
         let movement = match previous {
@@ -322,6 +329,7 @@ pub mod comparables {
     pub const COL_STATUS: &str = "Status";
     pub const STATUS_ACTIVE: &str = "In peer set";
     pub const STATUS_INACTIVE: &str = "Removed";
+    pub const STATUS_PROVISIONAL: &str = "Provisional";
     pub const NOT_RATED: &str = "Not rated";
     pub const NO_VALUE: &str = "\u{2014}";
 
@@ -342,6 +350,9 @@ pub mod comparables {
     }
     pub fn amended(name: &str) -> String {
         format!("Record for {name} amended.")
+    }
+    pub fn claimed(name: &str) -> String {
+        format!("Comparable claimed as {name}. Ratings are no longer provisional.")
     }
     pub fn removed(name: &str) -> String {
         format!("{name} removed from the peer set. History is retained.")
@@ -381,6 +392,13 @@ pub mod comparable_form {
 
     pub const SUBMIT_NEW: &str = "Add to peer set";
     pub const SUBMIT_EDIT: &str = "Save changes";
+    pub const SUBMIT_CLAIM: &str = "Claim this Comparable";
+    pub const CLAIM_TITLE: &str = "Unidentified Comparable";
+    pub fn claim_subtitle(added: &str) -> String {
+        format!("Identified from your extended social graph on {added}.")
+    }
+    pub const CLAIM_HELP: &str = "Ratings for this Comparable are provisional estimates. Once you have \
+         established who this is, enter their name and claim the record. Its history is kept.";
     pub const REMOVE: &str = "Remove from peer set";
     pub const RESTORE: &str = "Restore to peer set";
     pub const DELETE: &str = "Delete permanently";

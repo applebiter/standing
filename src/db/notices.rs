@@ -10,6 +10,7 @@ use super::{Result, stamp};
 pub mod kind {
     pub const MARKET_CLOSE: &str = "market_close";
     pub const THRESHOLD: &str = "threshold";
+    pub const REBALANCE: &str = "rebalance";
 }
 
 pub fn insert(conn: &Connection, kind: &str, body: &str, now: Timestamp) -> Result<()> {

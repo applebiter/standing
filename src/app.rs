@@ -107,13 +107,17 @@ impl Session {
         }
         if self.computed_revision != Some(self.revision) {
             self.computed_revision = Some(self.revision);
-            self.compute_error = match run::recompute(&mut self.conn, now) {
+            self.compute_error = match run::recompute(&mut self.conn, now, &tz) {
                 Ok(run::Recomputed {
                     reading,
                     adjustments,
+                    introduced,
                 }) => {
                     self.reading = Some(reading);
-                    if !adjustments.is_empty() {
+                    if introduced.is_some() {
+                        // The peer set changed: recompute on the next frame.
+                        self.revision += 1;
+                    } else if !adjustments.is_empty() {
                         // The threshold and notices changed; screens must
                         // re-query, but the index itself is current.
                         self.revision += 1;

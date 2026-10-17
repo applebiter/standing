@@ -38,6 +38,22 @@ pub fn insert(
     })
 }
 
+/// Records a generated estimate for a Comparable.
+pub fn insert_provisional(
+    conn: &Connection,
+    comparable_id: i64,
+    dimension_id: &str,
+    value: f64,
+    now: Timestamp,
+) -> Result<()> {
+    conn.execute(
+        "INSERT INTO ratings (subject_kind, comparable_id, dimension_id, value, provisional, rated_at)
+         VALUES ('comparable', ?1, ?2, ?3, 1, ?4)",
+        params![comparable_id, dimension_id, value.clamp(MIN, MAX), stamp(now)],
+    )?;
+    Ok(())
+}
+
 /// The current rating for every subject and dimension: the latest by time of
 /// rating, then by order of entry.
 pub fn current(conn: &Connection) -> Result<HashMap<(Subject, String), Rating>> {

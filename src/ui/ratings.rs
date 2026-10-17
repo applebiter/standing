@@ -385,30 +385,32 @@ fn dimension_card(
                             .get(&(subject, d.id.clone()))
                             .copied()
                             .or(current.map(|r| r.value));
-                        ui.horizontal(|ui| match (value, current) {
-                            (Some(v), Some(r))
-                                if r.provisional
-                                    && !drafts.contains_key(&(subject, d.id.clone())) =>
-                            {
-                                ui.label(RichText::new(format::rating(v)).monospace().italics());
-                                ui.label(
-                                    RichText::new(copy::ratings::PROVISIONAL)
-                                        .small()
-                                        .italics()
-                                        .color(p.text_secondary),
-                                );
+                        let provisional = current.is_some_and(|r| r.provisional)
+                            && !drafts.contains_key(&(subject, d.id.clone()));
+                        match value {
+                            Some(v) => {
+                                let text = RichText::new(format::rating(v)).monospace();
+                                ui.label(if provisional { text.italics() } else { text });
                             }
-                            (Some(v), _) => {
-                                ui.label(RichText::new(format::rating(v)).monospace());
-                            }
-                            (None, _) => {
+                            None => {
                                 ui.label(
                                     RichText::new(copy::ratings::NOT_RATED)
                                         .small()
                                         .color(p.text_secondary),
                                 );
                             }
-                        });
+                        }
+                        if provisional {
+                            ui.end_row();
+                            ui.label("");
+                            ui.label(
+                                RichText::new(copy::ratings::PROVISIONAL)
+                                    .small()
+                                    .italics()
+                                    .color(p.text_secondary),
+                            );
+                            ui.label("");
+                        }
                         ui.end_row();
                     }
                 });

@@ -7,7 +7,7 @@ use super::form::{self, FieldSpec};
 use crate::app::Session;
 use crate::db::comparables;
 use crate::model::FieldError;
-use crate::model::comparable::{Comparable, ComparableDraft, Field};
+use crate::model::comparable::{Comparable, ComparableDraft, Field, Origin};
 use crate::theme::{Palette, space};
 use crate::{copy, format};
 
@@ -78,13 +78,25 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut FormSta
                 let added = format::local_date(&c.created_at)
                     .map(format::date_long)
                     .unwrap_or_default();
-                form::header(
-                    ui,
-                    p,
-                    Some(&c.ticker),
-                    copy::comparable_form::EDIT_TITLE,
-                    &copy::comparable_form::edit_subtitle(&added),
-                );
+                if is_unclaimed(c) {
+                    form::header(
+                        ui,
+                        p,
+                        Some(&c.ticker),
+                        copy::comparable_form::CLAIM_TITLE,
+                        &copy::comparable_form::claim_subtitle(&added),
+                    );
+                    form::help(ui, p, copy::comparable_form::CLAIM_HELP);
+                    ui.add_space(space::LG);
+                } else {
+                    form::header(
+                        ui,
+                        p,
+                        Some(&c.ticker),
+                        copy::comparable_form::EDIT_TITLE,
+                        &copy::comparable_form::edit_subtitle(&added),
+                    );
+                }
             }
             None => form::header(
                 ui,
@@ -139,10 +151,10 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut FormSta
         }
 
         ui.horizontal(|ui| {
-            let submit = if state.editing.is_some() {
-                copy::comparable_form::SUBMIT_EDIT
-            } else {
-                copy::comparable_form::SUBMIT_NEW
+            let submit = match &state.editing {
+                Some(c) if is_unclaimed(c) => copy::comparable_form::SUBMIT_CLAIM,
+                Some(_) => copy::comparable_form::SUBMIT_EDIT,
+                None => copy::comparable_form::SUBMIT_NEW,
             };
             if super::primary_button(ui, p, submit).clicked() {
                 state.attempted = true;
@@ -185,6 +197,11 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut FormSta
     outcome
 }
 
+/// An introduced Comparable the user has not yet identified.
+pub fn is_unclaimed(c: &Comparable) -> bool {
+    c.origin == Origin::Archetype && c.claimed_at.is_none()
+}
+
 /// Validates and writes the form. Returns the notice to show on success.
 fn submit_form(session: &mut Session, state: &mut FormState) -> Option<String> {
     let fields = match state.draft.validate() {
@@ -196,6 +213,10 @@ fn submit_form(session: &mut Session, state: &mut FormState) -> Option<String> {
     };
     state.errors.clear();
     let result = match &state.editing {
+        Some(c) if is_unclaimed(c) => {
+            comparables::claim(&mut session.conn, c.id, &fields, Timestamp::now())
+                .map(|_| copy::comparables::claimed(&fields.name))
+        }
         Some(c) => comparables::update(&session.conn, c.id, &fields)
             .map(|_| copy::comparables::amended(&fields.name)),
         None => comparables::insert(&session.conn, &fields, Timestamp::now())
