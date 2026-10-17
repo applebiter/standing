@@ -1,8 +1,7 @@
-//! The Quarterly Earnings Call. Free of egui.
+//! The Quarterly Statement. Free of egui.
 
 pub mod data;
-pub mod earnings_call;
-pub mod phrases;
+pub mod statement;
 
 use std::path::Path;
 use std::sync::OnceLock;
@@ -11,7 +10,7 @@ use minijinja::Environment;
 use minijinja::value::Serde;
 use serde::Serialize;
 
-use earnings_call::EarningsCall;
+use statement::Statement;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Format {
@@ -36,12 +35,12 @@ fn env() -> &'static Environment<'static> {
         let mut env = Environment::new();
         for (name, source) in [
             (
-                "earnings_call.md.j2",
-                include_str!("../../templates/earnings_call.md.j2"),
+                "statement.md.j2",
+                include_str!("../../templates/statement.md.j2"),
             ),
             (
-                "earnings_call.html.j2",
-                include_str!("../../templates/earnings_call.html.j2"),
+                "statement.html.j2",
+                include_str!("../../templates/statement.html.j2"),
             ),
         ] {
             env.add_template(name, source)
@@ -66,10 +65,10 @@ struct WithStyle<'a, T: Serialize> {
     css: &'static str,
 }
 
-pub fn render(call: &EarningsCall, format: Format) -> Result<String, minijinja::Error> {
-    let name = format!("earnings_call.{}.j2", format.extension());
+pub fn render(statement: &Statement, format: Format) -> Result<String, minijinja::Error> {
+    let name = format!("statement.{}.j2", format.extension());
     let mut out = env().get_template(&name)?.render(Serde(WithStyle {
-        report: call,
+        report: statement,
         css: CSS,
     }))?;
     if !out.ends_with('\n') {
@@ -78,10 +77,9 @@ pub fn render(call: &EarningsCall, format: Format) -> Result<String, minijinja::
     Ok(out)
 }
 
-/// Suggested file name: `Earnings Call Q4 2026.md`.
-pub fn file_name(call: &EarningsCall, format: Format) -> String {
-    let quarter = call.title.trim_end_matches(" Earnings Call");
-    format!("Earnings Call {quarter}.{}", format.extension())
+/// Suggested file name: `Quarterly Statement Q4 2026.md`.
+pub fn file_name(statement: &Statement, format: Format) -> String {
+    format!("{}.{}", statement.title, format.extension())
 }
 
 pub fn write(path: &Path, contents: &str) -> std::io::Result<()> {
@@ -91,7 +89,7 @@ pub fn write(path: &Path, contents: &str) -> std::io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use earnings_call::{prepare, tests::sample};
+    use statement::{prepare, tests::sample};
 
     #[test]
     fn markdown() {
@@ -115,12 +113,23 @@ mod tests {
     }
 
     #[test]
+    fn markdown_table_cells_stay_on_one_row() {
+        let mut d = sample();
+        d.peers[0].name = "Pipes | and\nnewlines".into();
+        let md = render(&prepare(&d), Format::Markdown).unwrap();
+        assert!(md.contains("| DANA | Pipes \\| and newlines |"));
+    }
+
+    #[test]
     fn file_names() {
-        let call = prepare(&sample());
+        let s = prepare(&sample());
         assert_eq!(
-            file_name(&call, Format::Markdown),
-            "Earnings Call Q4 2026.md"
+            file_name(&s, Format::Markdown),
+            "Quarterly Statement Q4 2026.md"
         );
-        assert_eq!(file_name(&call, Format::Html), "Earnings Call Q4 2026.html");
+        assert_eq!(
+            file_name(&s, Format::Html),
+            "Quarterly Statement Q4 2026.html"
+        );
     }
 }

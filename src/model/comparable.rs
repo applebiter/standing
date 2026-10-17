@@ -87,6 +87,19 @@ impl ComparableDraft {
     }
 }
 
+/// A Comparable's name as it reads within a sentence. Introduced
+/// Comparables are described ("Your manager's manager"); their first word is
+/// lowercased there. Names entered by the user are left as entered.
+pub fn in_sentence(name: &str) -> String {
+    const DESCRIPTIVE: [&str; 5] = ["Your", "A", "An", "The", "Someone"];
+    match name.split_once(' ') {
+        Some((first, rest)) if DESCRIPTIVE.contains(&first) => {
+            format!("{} {rest}", first.to_lowercase())
+        }
+        _ => name.to_owned(),
+    }
+}
+
 /// Issues a ticker for a new Comparable: the first four letters of a
 /// one-word name, otherwise the initials of up to four words, uppercased.
 /// A numeral is appended if the symbol is already taken.
@@ -125,6 +138,19 @@ pub fn issue_ticker<'a>(name: &str, taken: impl IntoIterator<Item = &'a str>) ->
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn descriptions_read_naturally_in_a_sentence() {
+        assert_eq!(
+            in_sentence("Your manager's manager"),
+            "your manager's manager"
+        );
+        assert_eq!(in_sentence("Marcus Bell"), "Marcus Bell");
+        assert_eq!(
+            in_sentence("Dana's brother-in-law (the one with the boat)"),
+            "Dana's brother-in-law (the one with the boat)"
+        );
+    }
 
     #[test]
     fn tickers_from_names() {

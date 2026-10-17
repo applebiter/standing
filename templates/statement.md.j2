@@ -1,0 +1,19 @@
+# {{ title }}
+
+**{{ holder }}**  
+{{ period }}
+{% for s in sections %}
+## {{ s.title }}
+{% if s.note %}
+{{ s.note }}
+{% endif %}
+{%- if s.rows %}
+|{% for c in s.columns %} {{ c.label }} |{% endfor %}
+|{% for c in s.columns %}{% if c.numeric %}---:{% else %}---{% endif %}|{% endfor %}
+{% for row in s.rows %}|{% for cell in row %} {{ cell|cell }} |{% endfor %}
+{% endfor %}{% else %}
+{{ s.empty }}
+{% endif %}{% endfor %}
+---
+
+*Prepared by Standing. Figures are computed as set out in the Methodology.*

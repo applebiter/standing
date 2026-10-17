@@ -1,4 +1,4 @@
-//! Gathers a quarter's record for the Earnings Call.
+//! Gathers a quarter's record for the Quarterly Statement.
 
 use std::collections::HashMap;
 
@@ -7,7 +7,7 @@ use jiff::civil::Date;
 use jiff::tz::TimeZone;
 use rusqlite::Connection;
 
-use super::earnings_call::{Headwind, PeerResult, Quarter, QuarterData, Range};
+use super::statement::{Headwind, PeerResult, Quarter, QuarterData, Range, ThresholdChange};
 use crate::copy;
 use crate::db;
 use crate::engine::constants::CONSERVATIVE_PEER_MARGIN;
@@ -45,10 +45,10 @@ fn range(points: &[(Timestamp, f64)]) -> Option<Range> {
     })
 }
 
-fn within(stamp: &str, from: Timestamp, to: Timestamp) -> bool {
-    stamp
-        .parse::<Timestamp>()
-        .is_ok_and(|t| t >= from && t < to)
+/// The local date of a stored timestamp, if it falls within [from, to).
+fn dated_within(stamp: &str, from: Timestamp, to: Timestamp, tz: &TimeZone) -> Option<Date> {
+    let t = stamp.parse::<Timestamp>().ok()?;
+    (t >= from && t < to).then(|| market::day_of(t, tz))
 }
 
 /// The record for `quarter`, up to `today` if the quarter is in progress.
@@ -70,14 +70,18 @@ pub fn gather(
         .iter()
         .find(|e| e.changed_at.parse::<Timestamp>().is_ok_and(|t| t < to))
         .map(|e| e.new);
-    let mut adjustments: Vec<(f64, f64)> = history
+    let mut threshold_changes: Vec<ThresholdChange> = history
         .iter()
-        .filter(|e| {
-            e.reason == db::threshold::Reason::Adjustment && within(&e.changed_at, from, to)
+        .filter_map(|e| {
+            Some(ThresholdChange {
+                date: dated_within(&e.changed_at, from, to, tz)?,
+                prior: e.prior,
+                new: e.new,
+                reason: e.reason,
+            })
         })
-        .filter_map(|e| Some((e.prior?, e.new)))
         .collect();
-    adjustments.reverse();
+    threshold_changes.reverse();
 
     let all = db::comparables::all(conn)?;
     let names: HashMap<i64, &str> = all.iter().map(|c| (c.id, c.name.as_str())).collect();
@@ -94,24 +98,26 @@ pub fn gather(
             )?),
         });
     }
-    let introduced = all
+    let mut introduced: Vec<(Date, String)> = all
         .iter()
-        .filter(|c| c.origin == Origin::Archetype && within(&c.created_at, from, to))
-        .map(|c| c.name.clone())
+        .filter(|c| c.origin == Origin::Archetype)
+        .filter_map(|c| Some((dated_within(&c.created_at, from, to, tz)?, c.name.clone())))
         .collect();
+    introduced.sort();
 
     let dims = db::dimensions::visible(conn)?;
-    let discovered = dims
+    let mut discovered: Vec<(Date, String)> = dims
         .iter()
-        .filter(|d| {
-            d.discovered_at
-                .as_deref()
-                .is_some_and(|t| within(t, from, to))
+        .filter_map(|d| {
+            Some((
+                dated_within(d.discovered_at.as_deref()?, from, to, tz)?,
+                d.name.clone(),
+            ))
         })
-        .map(|d| d.name.clone())
         .collect();
+    discovered.sort();
 
-    // Headwinds and positions use ratings current at the time of the call.
+    // Headwinds and positions use ratings current when the statement is prepared.
     let inputs = run::inputs(conn)?;
     let by_id: HashMap<&str, _> = dims.iter().map(|d| (d.id.as_str(), d)).collect();
     let mut headwinds: Vec<Headwind> = inputs
@@ -171,10 +177,9 @@ pub fn gather(
             .map(|p| p.display_name.clone())
             .filter(|n| !n.trim().is_empty())
             .unwrap_or_else(|| copy::reports::UNNAMED.to_owned()),
-        seed: profile.map_or(0, |p| p.rng_seed),
         psi,
         threshold_at_end,
-        adjustments,
+        threshold_changes,
         headwinds,
         peers,
         introduced,
@@ -242,6 +247,8 @@ mod tests {
         assert_eq!(d.name, "Alex");
         assert_eq!(d.as_of, today);
         assert!(d.psi.is_some());
+        assert_eq!(d.threshold_changes.len(), 1);
+        assert_eq!(d.threshold_changes[0].date, jiff::civil::date(2026, 10, 5));
         assert_eq!(d.headwinds.len(), 1);
         assert_eq!(d.headwinds[0].dimension, "Sourdough starter age");
         assert_eq!(d.headwinds[0].leader, "Dana");
@@ -250,6 +257,6 @@ mod tests {
 
         let earlier = gather(&conn, qs[1], today, &tz()).unwrap();
         assert!(earlier.psi.is_none());
-        assert!(earlier.adjustments.is_empty());
+        assert!(earlier.threshold_changes.is_empty());
     }
 }

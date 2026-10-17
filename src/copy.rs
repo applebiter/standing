@@ -391,27 +391,67 @@ pub mod onboarding {
 
 pub mod reports {
     pub const TITLE: &str = "Reports";
-    pub const SUBTITLE: &str = "Quarterly earnings calls, prepared from your record.";
-    pub fn quarter_option(quarter: &str) -> String {
-        format!("{quarter} Earnings Call")
-    }
+    pub const SUBTITLE: &str = "Quarterly statements, prepared from your record.";
     pub const EXPORT_MARKDOWN: &str = "Export Markdown";
     pub const EXPORT_HTML: &str = "Export HTML";
     pub const FILTER_MARKDOWN: &str = "Markdown";
     pub const FILTER_HTML: &str = "HTML";
     pub fn exported(path: &str) -> String {
-        format!("Report saved to {path}.")
+        format!("Statement saved to {path}.")
     }
-    pub const TRANSCRIPT: &str = "Transcript";
-    pub const HIGHLIGHTS: &str = "Highlights";
-    pub const SUPPLEMENT_HEADWINDS: &str = "Supplementary Information: Headwinds";
-    pub const SUPPLEMENT_FILINGS: &str = "Supplementary Information: Daily Filings";
-    pub const SPREAD_NOTE: &str =
-        "Spread is the reporting party's adjusted rating less that of the leading Comparable.";
-    /// Used in reports when no display name has been set.
-    pub const UNNAMED: &str = "The Reporting Party";
-    pub const LOAD_FAILED: &str = "The report could not be prepared.";
-    pub const EXPORT_FAILED: &str = "The report could not be saved.";
+    pub const STATEMENT: &str = "Statement";
+    /// Used when no display name has been set.
+    pub const UNNAMED: &str = "Account holder";
+    pub const LOAD_FAILED: &str = "The statement could not be prepared.";
+    pub const EXPORT_FAILED: &str = "The statement could not be saved.";
+}
+
+pub mod statement {
+    pub fn title(quarter: &str) -> String {
+        format!("Quarterly Statement {quarter}")
+    }
+
+    pub const SUMMARY: &str = "Summary";
+    pub const OPENING: &str = "Opening index";
+    pub const CLOSING: &str = "Closing index";
+    pub const CHANGE: &str = "Change";
+    pub const RANGE: &str = "Quarter range";
+    pub const THRESHOLD: &str = "Enough Threshold at close";
+    pub const SHORTFALL: &str = "Shortfall at close";
+    pub const POSITIONS: &str = "Positions held";
+
+    pub const THRESHOLD_SECTION: &str = "Enough Threshold";
+    pub const NO_THRESHOLD_CHANGES: &str = "No changes in the period.";
+    pub const HEADWINDS: &str = "Headwinds";
+    pub const SPREAD_NOTE: &str = "Dimensions on which you trail most, by your adjusted rating \
+                                   less that of the leading Comparable. Ratings as currently held.";
+    pub const NO_HEADWINDS: &str = "No headwinds recorded.";
+    pub const PEERS: &str = "Peer Performance";
+    pub const NO_PEERS: &str = "No Comparables in the peer set.";
+    pub const INTRODUCED: &str = "Comparables Introduced";
+    pub const NO_INTRODUCED: &str = "None in the period.";
+    pub const DISCOVERED: &str = "Dimensions Discovered";
+    pub const NO_DISCOVERED: &str = "None in the period.";
+    pub const FILINGS: &str = "Daily Filings";
+    pub const NO_FILINGS: &str = "No filings in the period.";
+
+    pub const COL_MEASURE: &str = "Measure";
+    pub const COL_VALUE: &str = "Value";
+    pub const COL_DATE: &str = "Date";
+    pub const COL_PRIOR: &str = "Prior";
+    pub const COL_NEW: &str = "New";
+    pub const COL_REASON: &str = "Reason";
+    pub const COL_DIMENSION: &str = "Dimension";
+    pub const COL_SECTOR: &str = "Sector";
+    pub const COL_SPREAD: &str = "Spread";
+    pub const COL_LEADER: &str = "Leader";
+    pub const COL_TICKER: &str = "Ticker";
+    pub const COL_COMPARABLE: &str = "Comparable";
+    pub const COL_OPEN: &str = "Open";
+    pub const COL_CLOSE: &str = "Close";
+    pub const COL_CHANGE: &str = "Change";
+    pub const COL_EVENT: &str = "Event";
+    pub const COL_FILINGS: &str = "Filings";
 }
 
 pub mod form {

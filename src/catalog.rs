@@ -154,6 +154,89 @@ pub fn sync(conn: &mut Connection, entries: &[Entry]) -> Result<usize, CatalogEr
     Ok(inserted)
 }
 
+/// An industry and its dimensions, for the reference.
+type Industry<'a> = (&'a str, Vec<&'a Entry>);
+
+/// The SCCD Reference (`docs/sccd-reference.md`): every dimension classified
+/// at the outset, by sector and industry. Dimensions held for discovery are
+/// not listed.
+pub fn reference(entries: &[Entry], version: &str) -> String {
+    let listed: Vec<&Entry> = entries.iter().filter(|e| !e.discovery).collect();
+    // Sectors and industries in order of first appearance.
+    let mut sectors: Vec<(&str, Vec<Industry<'_>>)> = Vec::new();
+    for e in &listed {
+        let i = match sectors.iter().position(|(s, _)| *s == e.sector) {
+            Some(i) => i,
+            None => {
+                sectors.push((&e.sector, Vec::new()));
+                sectors.len() - 1
+            }
+        };
+        let industries = &mut sectors[i].1;
+        match industries.iter().position(|(n, _)| *n == e.industry) {
+            Some(j) => industries[j].1.push(e),
+            None => industries.push((&e.industry, vec![e])),
+        }
+    }
+    let anchor = |s: &str| {
+        s.to_lowercase()
+            .chars()
+            .filter(|c| c.is_alphanumeric() || *c == ' ' || *c == '-')
+            .collect::<String>()
+            .replace(' ', "-")
+    };
+    let cell = |s: &str| s.replace('|', "\\|");
+
+    let mut out = String::new();
+    out.push_str("# The SCCD Reference\n\n");
+    out.push_str(&format!(
+        "Standard Classification of Comparison Dimensions, version {version}.\n\n"
+    ));
+    out.push_str(&format!(
+        "The Standard Classification of Comparison Dimensions (SCCD) organizes the dimensions \
+         on which standing is compared into sectors and industries. This reference lists the \
+         {} dimensions in the classification at the outset, in {} sectors and {} industries. \
+         Further dimensions are classified from time to time; see Dimension Discovery in the \
+         [Methodology](methodology.md#11-dimension-discovery).\n\n",
+        listed.len(),
+        sectors.len(),
+        sectors.iter().map(|(_, i)| i.len()).sum::<usize>()
+    ));
+    out.push_str(
+        "Identifiers are permanent. A dimension's identifier is never reissued, and the \
+         three-letter prefix identifies its sector.\n\n",
+    );
+    out.push_str(
+        "**Contents**\n\n| Sector | Prefix | Industries | Dimensions |\n|---|---|---:|---:|\n",
+    );
+    for (sector, industries) in &sectors {
+        let prefix = industries[0].1[0].id.split('-').next().unwrap_or_default();
+        let count: usize = industries.iter().map(|(_, d)| d.len()).sum();
+        out.push_str(&format!(
+            "| [{sector}](#{}) | {prefix} | {} | {count} |\n",
+            anchor(sector),
+            industries.len()
+        ));
+    }
+    for (sector, industries) in &sectors {
+        out.push_str(&format!("\n---\n\n## {sector}\n"));
+        for (industry, dims) in industries {
+            out.push_str(&format!(
+                "\n### {industry}\n\n| ID | Dimension | Definition |\n|---|---|---|\n"
+            ));
+            for d in dims {
+                out.push_str(&format!(
+                    "| {} | {} | {} |\n",
+                    d.id,
+                    cell(&d.name),
+                    cell(&d.definition)
+                ));
+            }
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -171,6 +254,31 @@ mod tests {
         assert!(entries.len() >= 500);
         assert!(entries.iter().any(|e| e.discovery));
         assert!(entries.iter().any(|e| !e.discovery));
+    }
+
+    /// Regenerate with `STANDING_UPDATE_DOCS=1 cargo test reference_document`.
+    #[test]
+    fn reference_document_is_current() {
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/docs/sccd-reference.md");
+        let expected = reference(&seed().unwrap(), crate::copy::SCCD_VERSION);
+        if std::env::var_os("STANDING_UPDATE_DOCS").is_some() {
+            std::fs::write(path, &expected).unwrap();
+        }
+        let actual = std::fs::read_to_string(path).unwrap_or_default();
+        assert!(
+            actual == expected,
+            "docs/sccd-reference.md is out of date with data/dimensions.csv; \
+             regenerate with STANDING_UPDATE_DOCS=1 cargo test reference_document"
+        );
+    }
+
+    #[test]
+    fn the_reference_never_lists_reserved_dimensions() {
+        let entries = seed().unwrap();
+        let doc = reference(&entries, "4.2");
+        for e in entries.iter().filter(|e| e.discovery) {
+            assert!(!doc.contains(&format!("| {} |", e.id)), "{}", e.id);
+        }
     }
 
     #[test]

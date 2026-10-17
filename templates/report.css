@@ -35,8 +35,7 @@ p.pre { white-space: pre-wrap; }
   body { background: none; padding: 0; }
   main { border: none; padding: 0; }
 }
-.turn { margin: 0 0 20px; }
-.speaker { font-weight: 600; margin: 0 0 4px; }
-.turn.analyst .speaker { color: #6a6863; }
-.turn.operator p:not(.speaker) { color: #6a6863; font-style: italic; }
-.note { font-size: 13px; color: #6a6863; }
+table.grid th { width: auto; font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: #6a6863; }
+table.grid th.num, table.grid td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.note, .empty { font-size: 13px; color: #6a6863; }

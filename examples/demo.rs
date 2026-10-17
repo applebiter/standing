@@ -270,7 +270,7 @@ fn main() -> anyhow::Result<()> {
                 if let Some(c) = introduced {
                     let fields = ComparableFields {
                         name: "Gordon Pratt".into(),
-                        relationship: Some(standing::report::phrases::in_sentence(&c.name)),
+                        relationship: Some(standing::model::comparable::in_sentence(&c.name)),
                     };
                     db::comparables::claim(&mut demo.conn, c.id, &fields, t)?;
                     demo.recompute(t)?;

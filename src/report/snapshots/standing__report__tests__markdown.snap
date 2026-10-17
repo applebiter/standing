@@ -2,148 +2,57 @@
 source: src/report/mod.rs
 expression: "render(&prepare(&sample()), Format::Markdown).unwrap()"
 ---
-# Q4 2026 Earnings Call
+# Quarterly Statement Q4 2026
 
-**Alex, Chief Executive**  
+**Alex Morgan**  
 1 October 2026 to 16 October 2026
 
-## Highlights
+## Summary
 
-| | |
+| Measure | Value |
 |---|---:|
-| Opening index | 96.00 |
-| Closing index | 90.84 |
-| Change | −5.16 (−5.37%) |
-| Quarter range | 88.50 to 101.25 |
-| Enough Threshold | 105.00 |
-| Threshold revisions | 4 |
-| Positions held | 1 |
+| Opening index | 99.87 |
+| Closing index | 87.22 |
+| Change | −12.65 (−12.67%) |
+| Quarter range | 81.05 to 99.87 |
+| Enough Threshold at close | 111.00 |
+| Shortfall at close | 23.78 |
+| Positions held | 0 |
 
+## Enough Threshold
 
-## Prepared Remarks
+| Date | Prior | New | Reason |
+|---|---:|---:|---|
+| 1 Oct 2026 | 137.00 | 92.00 | Set by user. |
+| 1 Oct 2026 | 92.00 | 111.00 | Threshold adjusted to reflect current market conditions. |
 
-**Operator**
+## Headwinds
 
-Welcome to the Q4 2026 results call for Alex. Following prepared remarks, we will open the line for questions from analysts. I will now turn the call over to the Chief Executive, Alex.
+Dimensions on which you trail most, by your adjusted rating less that of the leading Comparable. Ratings as currently held.
 
-**Alex, Chief Executive**
+| Dimension | Sector | Spread | Leader |
+|---|---|---:|---|
+| Height (when standing next to them) | Physical Assets | −4.20 | Gordon Pratt |
+| Vehicle interior condition | Material Holdings | −3.10 | Dana |
 
-Thank you, and thanks to everyone for being with us today.
+## Peer Performance
 
-The Personal Standing Index opened the quarter at 96.00 and closed at 90.84, a change of −5.16 points, or −5.37%. This was a challenging quarter, and the result reflects conditions across the peer set rather than any change in our underlying fundamentals.
+| Ticker | Comparable | Open | Close | Change |
+|---|---|---:|---:|---:|
+| DANA | Dana | 93.97 | 96.27 | +2.30 |
+| MB | Marcus Bell | — | — | — |
 
-The Enough Threshold was adjusted 4 times in the period, and now stands at 105.00. I would characterize that as a sign of the strength of the market.
+## Comparables Introduced
 
-I won't pretend the quarter was without challenges. Performance in sourdough starter age, parallel parking under observation and hairline trajectory was below our expectations.
+None in the period.
 
-For the coming quarter, we are prioritizing sourdough starter age. We are also undertaking a strategic review of procedural competence, and we will update you as appropriate.
+## Dimensions Discovered
 
-Across the peer set, Dana (DANA) posted a gain of 6.48 points. We congratulate them, and we are studying their results carefully.
+| Date | Dimension |
+|---|---|
+| 14 Oct 2026 | Peaked (has not yet) |
 
-The peer set expanded during the quarter with the addition of your manager's manager.
-
-The Standard Classification was extended during the quarter to include cat's apparent affection, now reflected in our results.
-
-Operator, we are now ready to take questions.
-
-## Question-and-Answer Session
-
-**Operator**
-
-Our first question comes from the line of an analyst at Continental Research Partners. Please go ahead.
-
-**Analyst, Continental Research Partners**
-
-Thanks for taking the question. Could you speak to performance in sourdough starter age? It looks like Dana has widened their lead there.
-
-**Alex, Chief Executive**
-
-I'd point you to the long-term trend.
-
-**Operator**
-
-We will take our next question from Second Street Equities.
-
-**Analyst, Second Street Equities**
-
-I wanted to ask about parallel parking under observation. Marcus Bell appears to be well ahead. Is that structural?
-
-**Alex, Chief Executive**
-
-We see that as a timing issue.
-
-**Operator**
-
-The next question is from Regional Securities. Your line is open.
-
-**Analyst, Regional Securities**
-
-Can you give us any guidance on the timeline for reaching the Enough Threshold? The shortfall is currently 14.16.
-
-**Alex, Chief Executive**
-
-We're very comfortable with where we are.
-
-**Operator**
-
-Our next question comes from Independent Research Associates. Please go ahead.
-
-**Analyst, Independent Research Associates**
-
-Could you comment on the performance of Dana? A gain of 6.48 points seems significant.
-
-**Alex, Chief Executive**
-
-We don't comment on individual Comparables.
-
-**Operator**
-
-We will take our next question from General Brokerage Services.
-
-**Analyst, General Brokerage Services**
-
-You currently hold one position. Can you talk about your strategy there?
-
-**Alex, Chief Executive**
-
-We don't break that out.
-
-**Operator**
-
-The next question is from Provincial Capital Markets. Your line is open.
-
-**Analyst, Provincial Capital Markets**
-
-Can you comment on the Spotlight readings this quarter?
-
-**Alex, Chief Executive**
-
-We'll have more to say about that next quarter.
-
-**Operator**
-
-That concludes our question-and-answer session. I will turn the call back to Alex for any closing remarks.
-
-**Alex, Chief Executive**
-
-Thank you all for your questions. We look forward to speaking with you next quarter.
-
-**Operator**
-
-Ladies and gentlemen, that concludes today's call. You may now disconnect.
-
-
-## Supplementary Information: Headwinds
-
-Spread is the reporting party's adjusted rating less that of the leading Comparable.
-
-| Dimension | Spread |
-|---|---:|
-| Sourdough starter age | −4.20 |
-| Parallel parking under observation | −3.10 |
-| Hairline trajectory | −2.50 |
-
-## Supplementary Information: Daily Filings
+## Daily Filings
 
 | Event | Filings |
 |---|---:|
@@ -151,4 +60,4 @@ Spread is the reporting party's adjusted rating less that of the leading Compara
 
 ---
 
-*Prepared by Standing. Figures are computed per the published methodology.*
+*Prepared by Standing. Figures are computed as set out in the Methodology.*

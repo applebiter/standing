@@ -1,23 +1,23 @@
-//! Reports: the Quarterly Earnings Call, shown as a printed page and exported
-//! as Markdown or HTML.
+//! Reports: the Quarterly Statement, shown as a printed page and exported as
+//! Markdown or HTML.
 
-use egui::{RichText, Sense, Ui};
+use egui::{Align, Layout, RichText, Sense, Ui};
 use jiff::tz::TimeZone;
 
 use super::Notice;
 use crate::app::Session;
 use crate::copy;
 use crate::engine::market;
-use crate::report::earnings_call::{self, EarningsCall, Figure, Quarter, Role};
+use crate::report::statement::{self, Quarter, Section, Statement};
 use crate::report::{self, Format, data};
 use crate::theme::{self, Palette, space};
 
-const PAGE_WIDTH: f32 = 720.0;
+const PAGE_WIDTH: f32 = 760.0;
 
 struct Loaded {
     revision: u64,
     quarter: Quarter,
-    call: EarningsCall,
+    statement: Statement,
 }
 
 #[derive(Default)]
@@ -58,7 +58,7 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
                     state.loaded = Some(Loaded {
                         revision: session.revision,
                         quarter,
-                        call: earnings_call::prepare(&d),
+                        statement: statement::prepare(&d),
                     })
                 }
                 Err(e) => {
@@ -73,18 +73,18 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
 
     ui.horizontal(|ui| {
         egui::ComboBox::from_id_salt("report-quarter")
-            .width(180.0)
+            .width(240.0)
             .selected_text(
                 state
                     .selected
-                    .map_or_else(String::new, |q| copy::reports::quarter_option(&q.label())),
+                    .map_or_else(String::new, |q| copy::statement::title(&q.label())),
             )
             .show_ui(ui, |ui| {
                 for q in &state.quarters {
                     ui.selectable_value(
                         &mut state.selected,
                         Some(*q),
-                        copy::reports::quarter_option(&q.label()),
+                        copy::statement::title(&q.label()),
                     );
                 }
             });
@@ -95,7 +95,7 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
                 (Format::Html, copy::reports::EXPORT_HTML),
             ] {
                 if super::secondary_button(ui, label).clicked() {
-                    state.notice = export(&l.call, format);
+                    state.notice = export(&l.statement, format);
                 }
             }
         }
@@ -104,14 +104,14 @@ pub fn show(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) 
     super::notice(ui, p, &mut state.notice);
 
     if let Some(l) = &state.loaded {
-        page(ui, p, &l.call);
+        page(ui, p, &l.statement);
     }
     ui.add_space(space::XL);
 }
 
-/// Asks where to save, and writes the report there.
-fn export(call: &EarningsCall, format: Format) -> Option<Notice> {
-    let contents = match report::render(call, format) {
+/// Asks where to save, and writes the statement there.
+fn export(statement: &Statement, format: Format) -> Option<Notice> {
+    let contents = match report::render(statement, format) {
         Ok(c) => c,
         Err(e) => {
             return Some(Notice::Error(format!(
@@ -125,7 +125,7 @@ fn export(call: &EarningsCall, format: Format) -> Option<Notice> {
         Format::Html => (copy::reports::FILTER_HTML, "html"),
     };
     let path = rfd::FileDialog::new()
-        .set_file_name(report::file_name(call, format))
+        .set_file_name(report::file_name(statement, format))
         .add_filter(label, &[ext])
         .save_file()?;
     Some(match report::write(&path, &contents) {
@@ -134,7 +134,7 @@ fn export(call: &EarningsCall, format: Format) -> Option<Notice> {
     })
 }
 
-fn page(ui: &mut Ui, p: &Palette, call: &EarningsCall) {
+fn page(ui: &mut Ui, p: &Palette, s: &Statement) {
     let width = ui.available_width().min(PAGE_WIDTH);
     egui::Frame::new()
         .fill(p.surface)
@@ -142,69 +142,24 @@ fn page(ui: &mut Ui, p: &Palette, call: &EarningsCall) {
         .inner_margin(egui::Margin::symmetric(48, 40))
         .show(ui, |ui| {
             ui.set_width(width - 98.0);
-            super::overline(ui, p, copy::reports::TRANSCRIPT);
+            super::overline(ui, p, copy::reports::STATEMENT);
             ui.add_space(space::XS);
             ui.label(
-                RichText::new(&call.title)
+                RichText::new(&s.title)
                     .family(theme::family::display())
-                    .size(36.0),
+                    .size(34.0),
             );
             ui.add_space(space::XS);
             ui.label(
-                RichText::new(format!("{} \u{b7} {}", call.company, call.period))
+                RichText::new(format!("{} \u{b7} {}", s.holder, s.period))
                     .monospace()
                     .size(12.0)
                     .color(p.text_secondary),
             );
-
-            heading(ui, p, copy::reports::HIGHLIGHTS);
-            rows(ui, p, &call.figures);
-
-            for section in &call.sections {
-                heading(ui, p, &section.title);
-                for turn in &section.turns {
-                    let speaker =
-                        RichText::new(&turn.speaker).family(theme::family::sans_semibold());
-                    ui.label(match turn.role {
-                        Role::Analyst => speaker.color(p.text_secondary),
-                        _ => speaker,
-                    });
-                    for para in &turn.paragraphs {
-                        let text = RichText::new(para).size(15.0);
-                        ui.add(
-                            egui::Label::new(match turn.role {
-                                Role::Operator => text.italics().color(p.text_secondary),
-                                _ => text,
-                            })
-                            .wrap(),
-                        );
-                    }
-                    ui.add_space(space::MD);
-                }
-            }
-            if !call.headwinds.is_empty() {
-                heading(ui, p, copy::reports::SUPPLEMENT_HEADWINDS);
-                ui.label(
-                    RichText::new(copy::reports::SPREAD_NOTE)
-                        .small()
-                        .color(p.text_secondary),
-                );
-                ui.add_space(space::XS);
-                rows(ui, p, &call.headwinds);
-            }
-            if !call.filings.is_empty() {
-                heading(ui, p, copy::reports::SUPPLEMENT_FILINGS);
-                rows(ui, p, &call.filings);
+            for section in &s.sections {
+                table(ui, p, section);
             }
         });
-}
-
-fn heading(ui: &mut Ui, p: &Palette, text: &str) {
-    ui.add_space(space::LG);
-    super::overline(ui, p, text);
-    ui.add_space(space::XS);
-    rule(ui, p);
-    ui.add_space(space::SM);
 }
 
 fn rule(ui: &mut Ui, p: &Palette) {
@@ -216,15 +171,70 @@ fn rule(ui: &mut Ui, p: &Palette) {
     );
 }
 
-fn rows(ui: &mut Ui, p: &Palette, figures: &[Figure]) {
+/// One section: a heading, an optional note, and its table (or the empty
+/// message). The first column takes the remaining width.
+fn table(ui: &mut Ui, p: &Palette, section: &Section) {
+    ui.add_space(space::LG);
+    super::overline(ui, p, &section.title);
+    ui.add_space(space::XS);
+    rule(ui, p);
+    ui.add_space(space::SM);
+    if let Some(note) = &section.note {
+        ui.add(egui::Label::new(RichText::new(note).small().color(p.text_secondary)).wrap());
+        ui.add_space(space::XS);
+    }
+    if section.rows.is_empty() {
+        ui.label(RichText::new(&section.empty).color(p.text_secondary));
+        return;
+    }
+    let width = ui.available_width();
+    let col_width = |i: usize| width * section.columns[i].width;
     ui.spacing_mut().interact_size.y = 0.0;
-    for f in figures {
+    let row = |ui: &mut Ui, cells: Vec<RichText>| {
         ui.horizontal(|ui| {
-            ui.label(RichText::new(&f.label).color(p.text_secondary));
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                ui.label(RichText::new(&f.value).monospace());
-            });
+            ui.spacing_mut().item_spacing.x = 0.0;
+            for (i, cell) in cells.into_iter().enumerate() {
+                let layout = if section.columns[i].numeric {
+                    Layout::right_to_left(Align::Center)
+                } else {
+                    Layout::left_to_right(Align::Center)
+                };
+                ui.allocate_ui_with_layout(egui::vec2(col_width(i), 20.0), layout, |ui| {
+                    ui.set_width(col_width(i));
+                    // A gutter between columns.
+                    if i > 0 && !section.columns[i].numeric {
+                        ui.add_space(space::MD);
+                    }
+                    ui.add(egui::Label::new(cell).truncate());
+                });
+            }
         });
+    };
+    row(
+        ui,
+        section
+            .columns
+            .iter()
+            .map(|c| super::overline_text(p, &c.label))
+            .collect(),
+    );
+    ui.add_space(space::XS);
+    for cells in &section.rows {
+        row(
+            ui,
+            cells
+                .iter()
+                .enumerate()
+                .map(|(i, c)| {
+                    let t = RichText::new(c);
+                    if section.columns[i].numeric {
+                        t.monospace()
+                    } else {
+                        t
+                    }
+                })
+                .collect(),
+        );
         ui.add_space(space::XS);
         rule(ui, p);
         ui.add_space(space::XS);

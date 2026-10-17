@@ -6,138 +6,60 @@ expression: "html.split(\"</style>\").nth(1).unwrap()"
 </head>
 <body>
 <main>
-<p class="overline">Transcript</p>
-<h1>Q4 2026 Earnings Call</h1>
-<p class="meta">Alex, Chief Executive · 1 October 2026 to 16 October 2026</p>
+<p class="overline">Statement</p>
+<h1>Quarterly Statement Q4 2026</h1>
+<p class="meta">Alex Morgan · 1 October 2026 to 16 October 2026</p>
 
-<h2>Highlights</h2>
-<table>
-<tr><th>Opening index</th><td class="num">96.00</td></tr>
-<tr><th>Closing index</th><td class="num">90.84</td></tr>
-<tr><th>Change</th><td class="num">−5.16 (−5.37%)</td></tr>
-<tr><th>Quarter range</th><td class="num">88.50 to 101.25</td></tr>
-<tr><th>Enough Threshold</th><td class="num">105.00</td></tr>
-<tr><th>Threshold revisions</th><td class="num">4</td></tr>
-<tr><th>Positions held</th><td class="num">1</td></tr>
+<h2>Summary</h2>
+<table class="grid">
+<tr><th>Measure</th><th class="num">Value</th></tr>
+<tr><td>Opening index</td><td class="num">99.87</td></tr>
+<tr><td>Closing index</td><td class="num">87.22</td></tr>
+<tr><td>Change</td><td class="num">−12.65 (−12.67%)</td></tr>
+<tr><td>Quarter range</td><td class="num">81.05 to 99.87</td></tr>
+<tr><td>Enough Threshold at close</td><td class="num">111.00</td></tr>
+<tr><td>Shortfall at close</td><td class="num">23.78</td></tr>
+<tr><td>Positions held</td><td class="num">0</td></tr>
 </table>
 
-<h2>Prepared Remarks</h2>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>Welcome to the Q4 2026 results call for Alex. Following prepared remarks, we will open the line for questions from analysts. I will now turn the call over to the Chief Executive, Alex.</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>Thank you, and thanks to everyone for being with us today.</p>
-<p>The Personal Standing Index opened the quarter at 96.00 and closed at 90.84, a change of −5.16 points, or −5.37%. This was a challenging quarter, and the result reflects conditions across the peer set rather than any change in our underlying fundamentals.</p>
-<p>The Enough Threshold was adjusted 4 times in the period, and now stands at 105.00. I would characterize that as a sign of the strength of the market.</p>
-<p>I won&#x27;t pretend the quarter was without challenges. Performance in sourdough starter age, parallel parking under observation and hairline trajectory was below our expectations.</p>
-<p>For the coming quarter, we are prioritizing sourdough starter age. We are also undertaking a strategic review of procedural competence, and we will update you as appropriate.</p>
-<p>Across the peer set, Dana (DANA) posted a gain of 6.48 points. We congratulate them, and we are studying their results carefully.</p>
-<p>The peer set expanded during the quarter with the addition of your manager&#x27;s manager.</p>
-<p>The Standard Classification was extended during the quarter to include cat&#x27;s apparent affection, now reflected in our results.</p>
-<p>Operator, we are now ready to take questions.</p>
-</div>
-
-<h2>Question-and-Answer Session</h2>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>Our first question comes from the line of an analyst at Continental Research Partners. Please go ahead.</p>
-</div>
-<div class="turn analyst">
-<p class="speaker">Analyst, Continental Research Partners</p>
-<p>Thanks for taking the question. Could you speak to performance in sourdough starter age? It looks like Dana has widened their lead there.</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>I&#x27;d point you to the long-term trend.</p>
-</div>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>We will take our next question from Second Street Equities.</p>
-</div>
-<div class="turn analyst">
-<p class="speaker">Analyst, Second Street Equities</p>
-<p>I wanted to ask about parallel parking under observation. Marcus Bell appears to be well ahead. Is that structural?</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>We see that as a timing issue.</p>
-</div>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>The next question is from Regional Securities. Your line is open.</p>
-</div>
-<div class="turn analyst">
-<p class="speaker">Analyst, Regional Securities</p>
-<p>Can you give us any guidance on the timeline for reaching the Enough Threshold? The shortfall is currently 14.16.</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>We&#x27;re very comfortable with where we are.</p>
-</div>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>Our next question comes from Independent Research Associates. Please go ahead.</p>
-</div>
-<div class="turn analyst">
-<p class="speaker">Analyst, Independent Research Associates</p>
-<p>Could you comment on the performance of Dana? A gain of 6.48 points seems significant.</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>We don&#x27;t comment on individual Comparables.</p>
-</div>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>We will take our next question from General Brokerage Services.</p>
-</div>
-<div class="turn analyst">
-<p class="speaker">Analyst, General Brokerage Services</p>
-<p>You currently hold one position. Can you talk about your strategy there?</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>We don&#x27;t break that out.</p>
-</div>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>The next question is from Provincial Capital Markets. Your line is open.</p>
-</div>
-<div class="turn analyst">
-<p class="speaker">Analyst, Provincial Capital Markets</p>
-<p>Can you comment on the Spotlight readings this quarter?</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>We&#x27;ll have more to say about that next quarter.</p>
-</div>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>That concludes our question-and-answer session. I will turn the call back to Alex for any closing remarks.</p>
-</div>
-<div class="turn executive">
-<p class="speaker">Alex, Chief Executive</p>
-<p>Thank you all for your questions. We look forward to speaking with you next quarter.</p>
-</div>
-<div class="turn operator">
-<p class="speaker">Operator</p>
-<p>Ladies and gentlemen, that concludes today&#x27;s call. You may now disconnect.</p>
-</div>
-
-<h2>Supplementary Information: Headwinds</h2>
-<p class="note">Spread is the reporting party's adjusted rating less that of the leading Comparable.</p>
-<table>
-<tr><th>Sourdough starter age</th><td class="num">−4.20</td></tr>
-<tr><th>Parallel parking under observation</th><td class="num">−3.10</td></tr>
-<tr><th>Hairline trajectory</th><td class="num">−2.50</td></tr>
-</table>
-<h2>Supplementary Information: Daily Filings</h2>
-<table>
-<tr><th>Compliment received</th><td class="num">3</td></tr>
+<h2>Enough Threshold</h2>
+<table class="grid">
+<tr><th>Date</th><th class="num">Prior</th><th class="num">New</th><th>Reason</th></tr>
+<tr><td>1 Oct 2026</td><td class="num">137.00</td><td class="num">92.00</td><td>Set by user.</td></tr>
+<tr><td>1 Oct 2026</td><td class="num">92.00</td><td class="num">111.00</td><td>Threshold adjusted to reflect current market conditions.</td></tr>
 </table>
 
-<p class="closing">Prepared by Standing. Figures are computed per the published methodology.</p>
+<h2>Headwinds</h2>
+<p class="note">Dimensions on which you trail most, by your adjusted rating less that of the leading Comparable. Ratings as currently held.</p>
+<table class="grid">
+<tr><th>Dimension</th><th>Sector</th><th class="num">Spread</th><th>Leader</th></tr>
+<tr><td>Height (when standing next to them)</td><td>Physical Assets</td><td class="num">−4.20</td><td>Gordon Pratt</td></tr>
+<tr><td>Vehicle interior condition</td><td>Material Holdings</td><td class="num">−3.10</td><td>Dana</td></tr>
+</table>
+
+<h2>Peer Performance</h2>
+<table class="grid">
+<tr><th>Ticker</th><th>Comparable</th><th class="num">Open</th><th class="num">Close</th><th class="num">Change</th></tr>
+<tr><td>DANA</td><td>Dana</td><td class="num">93.97</td><td class="num">96.27</td><td class="num">+2.30</td></tr>
+<tr><td>MB</td><td>Marcus Bell</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+</table>
+
+<h2>Comparables Introduced</h2>
+<p class="empty">None in the period.</p>
+
+<h2>Dimensions Discovered</h2>
+<table class="grid">
+<tr><th>Date</th><th>Dimension</th></tr>
+<tr><td>14 Oct 2026</td><td>Peaked (has not yet)</td></tr>
+</table>
+
+<h2>Daily Filings</h2>
+<table class="grid">
+<tr><th>Event</th><th class="num">Filings</th></tr>
+<tr><td>Compliment received</td><td class="num">3</td></tr>
+</table>
+
+<p class="closing">Prepared by Standing. Figures are computed as set out in the Methodology.</p>
 </main>
 </body>
 </html>
