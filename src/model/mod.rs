@@ -2,6 +2,7 @@
 
 pub mod comparable;
 pub mod dimension;
+pub mod event;
 pub mod rating;
 pub mod user;
 

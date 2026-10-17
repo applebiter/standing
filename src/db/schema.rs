@@ -90,6 +90,13 @@ CREATE TABLE index_snapshots (
 CREATE INDEX idx_snapshots_subject
   ON index_snapshots(subject_kind, comparable_id, computed_at);
 
+-- One row per local calendar day on which the market opened.
+CREATE TABLE market_days (
+  day       TEXT PRIMARY KEY,
+  opened_at TEXT NOT NULL,
+  closed_at TEXT
+) WITHOUT ROWID;
+
 CREATE TABLE notices (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
   kind       TEXT NOT NULL,

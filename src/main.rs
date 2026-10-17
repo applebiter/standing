@@ -2,6 +2,7 @@ mod app;
 mod catalog;
 mod copy;
 mod db;
+mod engine;
 mod format;
 mod model;
 mod settings;

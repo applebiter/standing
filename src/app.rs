@@ -3,6 +3,7 @@
 use egui::ThemePreference;
 use rusqlite::Connection;
 
+use crate::engine::{index::Reading, market, run};
 use crate::model::user::UserProfile;
 use crate::settings::{Paths, Settings, ThemeChoice};
 use crate::{catalog, copy, db, theme, ui};
@@ -43,6 +44,16 @@ pub struct Session {
     pub user: UserProfile,
     /// Incremented whenever the record is written, so screens know to re-query.
     pub revision: u64,
+    /// The latest index reading, recomputed whenever `revision` changes.
+    pub reading: Option<Reading>,
+    /// The revision `reading` was computed at.
+    computed_revision: Option<u64>,
+    /// The market day last checked.
+    market_day: Option<jiff::civil::Date>,
+    /// Why the last market check failed, if it did.
+    market_error: Option<String>,
+    /// Why the last recomputation failed, if it did.
+    compute_error: Option<String>,
 }
 
 impl Session {
@@ -60,7 +71,54 @@ impl Session {
             schema_version,
             user,
             revision: 0,
+            reading: None,
+            computed_revision: None,
+            market_day: None,
+            market_error: None,
+            compute_error: None,
         })
+    }
+
+    /// Failures from the market check and the last recomputation.
+    pub fn engine_errors(&self) -> impl Iterator<Item = &str> {
+        [&self.market_error, &self.compute_error]
+            .into_iter()
+            .filter_map(|e| e.as_deref())
+    }
+
+    /// Opens and closes the market as the calendar requires, and recomputes the
+    /// index when the record has changed. Returns the time until the next
+    /// local midnight, when this must run again.
+    pub fn maintain(&mut self) -> std::time::Duration {
+        let now = jiff::Timestamp::now();
+        let tz = jiff::tz::TimeZone::system();
+        let today = market::day_of(now, &tz);
+        if self.market_day != Some(today) {
+            self.market_day = Some(today);
+            self.market_error = match run::market_check(&self.conn, now, &tz) {
+                Ok(activity) => {
+                    if activity.opened || !activity.closed.is_empty() {
+                        self.revision += 1;
+                    }
+                    None
+                }
+                Err(e) => Some(format!("{} {e:#}", copy::engine::MARKET_FAILED)),
+            };
+        }
+        if self.computed_revision != Some(self.revision) {
+            self.computed_revision = Some(self.revision);
+            self.compute_error = match run::recompute(&mut self.conn, now) {
+                Ok(reading) => {
+                    self.reading = Some(reading);
+                    None
+                }
+                Err(e) => Some(format!("{} {e:#}", copy::engine::FAILED)),
+            };
+        }
+        let midnight = market::start_of(today.tomorrow().expect("date in range"), &tz);
+        std::time::Duration::try_from(midnight.duration_since(now))
+            .unwrap_or_default()
+            .saturating_add(std::time::Duration::from_secs(1))
     }
 }
 
@@ -104,6 +162,8 @@ impl eframe::App for Standing {
                 return;
             }
         };
+        let until_midnight = session.maintain();
+        ui.ctx().request_repaint_after(until_midnight);
 
         egui::Panel::left("nav")
             .resizable(false)
@@ -127,6 +187,10 @@ impl eframe::App for Standing {
                     .inner_margin(egui::Margin::same(theme::space::XL as i8)),
             )
             .show(ui, |ui| {
+                for err in session.engine_errors() {
+                    ui.label(egui::RichText::new(err).color(p.danger));
+                    ui.add_space(theme::space::MD);
+                }
                 let state = &mut self.ui_state;
                 let pending = |ui: &mut egui::Ui, (title, subtitle): (&str, &str)| {
                     ui::page(ui, title, |ui| ui::pending::show(ui, &p, title, subtitle))

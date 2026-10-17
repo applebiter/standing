@@ -9,6 +9,7 @@ use super::Notice;
 use super::comparable_form::{self, FormState, Outcome};
 use crate::app::Session;
 use crate::db::{self, comparables};
+use crate::engine::index::Reading;
 use crate::model::comparable::Comparable;
 use crate::model::rating::Subject;
 use crate::theme::{self, Palette, space};
@@ -113,7 +114,7 @@ fn list(ui: &mut Ui, p: &Palette, session: &mut Session, state: &mut State) {
         .iter()
         .filter(|c| c.active || state.show_inactive)
         .collect();
-    if let Some(c) = table(ui, p, loaded, &shown) {
+    if let Some(c) = table(ui, p, loaded, session.reading.as_ref(), &shown) {
         state.form = Some(FormState::edit(c));
     }
 }
@@ -148,7 +149,13 @@ fn load(session: &Session) -> db::Result<Loaded> {
 }
 
 /// Draws the table and returns the Comparable whose row was clicked, if any.
-fn table(ui: &mut Ui, p: &Palette, loaded: &Loaded, shown: &[&Comparable]) -> Option<Comparable> {
+fn table(
+    ui: &mut Ui,
+    p: &Palette,
+    loaded: &Loaded,
+    reading: Option<&Reading>,
+    shown: &[&Comparable],
+) -> Option<Comparable> {
     let wide = ui.available_width() >= 840.0;
     let mut clicked = None;
 
@@ -158,29 +165,39 @@ fn table(ui: &mut Ui, p: &Palette, loaded: &Loaded, shown: &[&Comparable]) -> Op
         .cell_layout(Layout::left_to_right(Align::Center))
         .auto_shrink([false, true])
         .column(Column::exact(84.0))
-        .column(Column::initial(200.0).clip(true))
-        .column(Column::remainder().at_least(140.0).clip(true))
-        .column(Column::exact(110.0));
+        .column(Column::initial(150.0).clip(true))
+        .column(Column::remainder().at_least(110.0).clip(true))
+        .column(Column::exact(72.0))
+        .column(Column::exact(100.0))
+        .column(Column::exact(96.0));
     if wide {
         builder = builder
-            .column(Column::exact(110.0))
-            .column(Column::exact(100.0));
+            .column(Column::exact(104.0))
+            .column(Column::exact(96.0));
     }
 
     builder
         .header(28.0, |mut header| {
-            let mut head = |text: &str| {
+            let mut head = |text: &str, hint: Option<&str>| {
                 header.col(|ui| {
-                    ui.label(super::overline_text(p, text));
+                    let r = ui.label(super::overline_text(p, text));
+                    if let Some(hint) = hint {
+                        r.on_hover_text(hint);
+                    }
                 });
             };
-            head(copy::comparables::COL_TICKER);
-            head(copy::comparables::COL_NAME);
-            head(copy::comparables::COL_RELATIONSHIP);
-            head(copy::comparables::COL_COVERAGE);
+            head(copy::comparables::COL_TICKER, None);
+            head(copy::comparables::COL_NAME, None);
+            head(copy::comparables::COL_RELATIONSHIP, None);
+            head(copy::comparables::COL_INDEX, None);
+            head(
+                copy::comparables::COL_SPREAD,
+                Some(copy::comparables::SPREAD_HINT),
+            );
+            head(copy::comparables::COL_COVERAGE, None);
             if wide {
-                head(copy::comparables::COL_LAST_RATED);
-                head(copy::comparables::COL_STATUS);
+                head(copy::comparables::COL_LAST_RATED, None);
+                head(copy::comparables::COL_STATUS, None);
             }
         })
         .body(|body| {
@@ -208,6 +225,15 @@ fn table(ui: &mut Ui, p: &Palette, loaded: &Loaded, shown: &[&Comparable]) -> Op
                     &mut row,
                     RichText::new(c.relationship.as_deref().unwrap_or("")).color(p.text_secondary),
                 );
+                let figure = |v: Option<String>| {
+                    RichText::new(v.unwrap_or_else(|| copy::comparables::NO_VALUE.to_owned()))
+                        .monospace()
+                        .color(primary)
+                };
+                let value = reading.and_then(|r| r.comparable(c.id)).map(|r| r.value);
+                cell(&mut row, figure(value.map(format::index)));
+                let spread = reading.and_then(|r| r.spread(c.id));
+                cell(&mut row, figure(spread.map(format::signed)));
                 cell(
                     &mut row,
                     RichText::new(copy::comparables::coverage(

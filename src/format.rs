@@ -34,6 +34,23 @@ pub fn rating(value: f64) -> String {
     format!("{value:.1}")
 }
 
+/// An index level: `97.42`.
+pub fn index(value: f64) -> String {
+    format!("{value:.2}")
+}
+
+/// A signed change in index points, with a true minus sign: `+1.25`, `\u{2212}0.40`.
+pub fn signed(value: f64) -> String {
+    let rounded = (value * 100.0).round() / 100.0;
+    if rounded > 0.0 {
+        format!("+{rounded:.2}")
+    } else if rounded < 0.0 {
+        format!("\u{2212}{:.2}", -rounded)
+    } else {
+        "0.00".to_owned()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -55,5 +72,13 @@ mod tests {
         assert!(local_date("not a time").is_none());
         assert_eq!(rating(7.5), "7.5");
         assert_eq!(rating(10.0), "10.0");
+    }
+
+    #[test]
+    fn index_values() {
+        assert_eq!(index(97.4249), "97.42");
+        assert_eq!(signed(1.249), "+1.25");
+        assert_eq!(signed(-0.4), "\u{2212}0.40");
+        assert_eq!(signed(-0.001), "0.00");
     }
 }

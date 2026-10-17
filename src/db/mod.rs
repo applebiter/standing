@@ -2,8 +2,12 @@
 
 pub mod comparables;
 pub mod dimensions;
+pub mod events;
+pub mod market;
+pub mod notices;
 pub mod ratings;
 pub mod schema;
+pub mod snapshots;
 pub mod user;
 
 use std::path::{Path, PathBuf};
@@ -118,6 +122,7 @@ mod tests {
             "weight_log",
             "index_snapshots",
             "notices",
+            "market_days",
         ] {
             assert!(tables.contains(&table.to_owned()), "missing table {table}");
         }

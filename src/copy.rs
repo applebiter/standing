@@ -43,6 +43,45 @@ pub mod pending {
     pub const REPORTS: (&str, &str) = ("Reports", "Quarterly earnings calls and exports.");
 }
 
+pub mod engine {
+    pub const FAILED: &str = "The index could not be computed.";
+    pub const MARKET_FAILED: &str = "Market hours could not be applied.";
+}
+
+pub mod notices {
+    use crate::engine::market::Candle;
+    use crate::format;
+
+    /// The daily summary posted when a market day closes.
+    pub fn market_close(day: jiff::civil::Date, candle: &Candle, previous: Option<f64>) -> String {
+        let movement = match previous {
+            Some(prev) if (candle.close - prev).abs() >= 0.005 => {
+                let change = candle.close - prev;
+                let pct = if prev.abs() > f64::EPSILON {
+                    100.0 * change.abs() / prev.abs()
+                } else {
+                    0.0
+                };
+                format!(
+                    ", {} {} ({pct:.2}%)",
+                    if change > 0.0 { "up" } else { "down" },
+                    format::index(change.abs())
+                )
+            }
+            Some(_) => ", unchanged".to_owned(),
+            None => String::new(),
+        };
+        format!(
+            "Market close, {}. The Personal Standing Index closed at {}{movement}. \
+             Session range {} to {}.",
+            format::date_long(day),
+            format::index(candle.close),
+            format::index(candle.low),
+            format::index(candle.high),
+        )
+    }
+}
+
 pub mod form {
     use crate::model::FieldError;
 
@@ -66,12 +105,17 @@ pub mod comparables {
     pub const COL_TICKER: &str = "Ticker";
     pub const COL_NAME: &str = "Name";
     pub const COL_RELATIONSHIP: &str = "Relationship";
+    pub const COL_INDEX: &str = "Index";
+    pub const COL_SPREAD: &str = "Your spread";
+    pub const SPREAD_HINT: &str =
+        "Your standing relative to this Comparable, in index points. Negative when they lead.";
     pub const COL_COVERAGE: &str = "Coverage";
     pub const COL_LAST_RATED: &str = "Last rated";
     pub const COL_STATUS: &str = "Status";
     pub const STATUS_ACTIVE: &str = "In peer set";
     pub const STATUS_INACTIVE: &str = "Removed";
     pub const NOT_RATED: &str = "Not rated";
+    pub const NO_VALUE: &str = "\u{2014}";
 
     pub fn coverage(rated: usize, total: usize) -> String {
         format!(
@@ -230,4 +274,36 @@ pub mod startup {
     pub const TITLE: &str = "The profile could not be opened.";
     pub const BODY: &str = "Standing was unable to open its database. No data has been modified. \
                             The details below may assist with diagnosis.";
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::engine::market::Candle;
+
+    #[test]
+    fn market_close_summaries() {
+        let day = jiff::civil::date(2026, 10, 16);
+        let candle = Candle {
+            day,
+            open: 98.0,
+            high: 98.3,
+            low: 96.1,
+            close: 97.42,
+        };
+        assert_eq!(
+            super::notices::market_close(day, &candle, Some(98.65)),
+            "Market close, 16 October 2026. The Personal Standing Index closed at 97.42, \
+             down 1.23 (1.25%). Session range 96.10 to 98.30."
+        );
+        assert_eq!(
+            super::notices::market_close(day, &candle, Some(97.42)),
+            "Market close, 16 October 2026. The Personal Standing Index closed at 97.42, \
+             unchanged. Session range 96.10 to 98.30."
+        );
+        assert_eq!(
+            super::notices::market_close(day, &candle, None),
+            "Market close, 16 October 2026. The Personal Standing Index closed at 97.42. \
+             Session range 96.10 to 98.30."
+        );
+    }
 }
